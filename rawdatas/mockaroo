@@ -1,0 +1,31 @@
+1. status: CustomList
+hạnh phúc, có phúc, được yêu, buồn, đáng yêu, biết ơn, hào hứng, đang yêu, điên, cảm kích, sung sướng, tuyệt vời, ngốc nghếch, vui vẻ, tuyệt vời, thật phong cách, thú vị, thư giãn, positive, rùng mình, đầy hi vọng, hân hoan, mệt mỏi, có động lực, proud, chỉ có một mình, chu đáo, OK, nhớ nhà, giận dữ, ốm yếu, hài lòng, kiệt sức, xúc động, tự tin, rất tuyệt, tươi mới, quyết đoán, kiệt sức, bực mình, vui vẻ, gặp may, đau khổ, buồn tẻ, buồn ngủ, tràn đầy sinh lực, đói, chuyên nghiệp, đau đớn, thanh thản, thất vọng, lạc quan, lạnh, dễ thương, tuyệt cú mèo, thật tuyệt, hối tiếc, thật giỏi, lo lắng, vui nhộn, tồi tệ, xuống tinh thần, đầy cảm hứng, hài lòng, phấn khích, bình tĩnh, bối rối, goofy, trống vắng, tốt, mỉa mai, cô đơn, mạnh mẽ, lo lắng, đặc biệt, chán nản, vui vẻ, tò mò, ủ dột, được chào đón, gục ngã, xinh đẹp, tuyệt vời, cáu, căng thẳng, thiếu, kích động, tinh quái, kinh ngạc, tức giận, buồn chán, bối rồi, mạnh mẽ, phẫn nộ, mới mẻ, thành công, ngạc nhiên, bối rối, nản lòng, tẻ nhạt, xinh xắn, khá hơn, tội lỗi, an toàn, tự do, hoang mang, già nua, lười biếng, tồi tệ hơn, khủng khiếp, thoải mái, ngớ ngẩn, hổ thẹn, kinh khủng, đang ngủ, khỏe, nhanh nhẹn, ngại ngùng, gay go, kỳ lạ, như con người, bị tổn thương, khủng khiếp
+2. account_id: CustomList
+63a6854c92f5e81f48ae4e51,63a6854c92f5e81f48ae4e52,63a6854c92f5e81f48ae4e53,63a6854c92f5e81f48ae4e54,63a6854c92f5e81f48ae4e55
+3. const id_array = ["63a6854c92f5e81f48ae4e51","63a6854c92f5e81f48ae4e52","63a6854c92f5e81f48ae4e53","63a6854c92f5e81f48ae4e54","63a6854c92f5e81f48ae4e55"]
+   const result_id_array = [];
+   // tạo array 7 phần tử dạng array
+   for(var i=1; i<=7; i++){
+     const sub_array = [];
+     const sub_id_array = [];
+     // mỗi array có từ 1-4 phần tử
+     var random = Math.floor(Math.random() * 4)+1;
+     for (var j=1; j<=random; j++){
+       // chọn 1 phần tử ngẫu nhiên từ id_array có index từ 0-5
+       var randomElement = Math.floor(Math.random() * 5);
+       while(sub_id_array.includes(randomElement)){
+          randomElement = Math.floor(Math.random() * 5);
+       }
+       sub_id_array.push(randomElement);
+       sub_array.push(id_array[randomElement]);
+     }
+     console.log(sub_id_array);
+     result_id_array.push(sub_array);
+   }
+   console.log(result_id_array);
+
+[["63a6854c92f5e81f48ae4e51", "63a6854c92f5e81f48ae4e53"], ["63a6854c92f5e81f48ae4e51", "63a6854c92f5e81f48ae4e53", "63a6854c92f5e81f48ae4e55"], ["63a6854c92f5e81f48ae4e52", "63a6854c92f5e81f48ae4e53", "63a6854c92f5e81f48ae4e55"], ["63a6854c92f5e81f48ae4e54", "63a6854c92f5e81f48ae4e52", "63a6854c92f5e81f48ae4e51"], ["63a6854c92f5e81f48ae4e53"], ["63a6854c92f5e81f48ae4e54"], ["63a6854c92f5e81f48ae4e54", "63a6854c92f5e81f48ae4e53", "63a6854c92f5e81f48ae4e52", "63a6854c92f5e81f48ae4e55"]]
+4. post_id: CustomList
+63a6cfac5727cc1540bd2ec6,63a6cfac5727cc1540bd2eca,63a6cfac5727cc1540bd2ed0,63a6cfac5727cc1540bd2ed2,63a6cfac5727cc1540bd2ed4,63a6cfac5727cc1540bd2ed6,63a6cfac5727cc1540bd2ece
+5. userComment_id: CustomList
+63a6854c92f5e81f48ae4e51,63a6854c92f5e81f48ae4e52,63a6854c92f5e81f48ae4e53,63a6854c92f5e81f48ae4e54,63a6854c92f5e81f48ae4e55
