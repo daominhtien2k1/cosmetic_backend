@@ -222,7 +222,14 @@ const responseError = {
             code: "508",
             message: "Password is incorrect",
         },
-    }
+    },
+    CAROUSEL_IS_NOT_EXISTED: {
+        statusCode: 400,
+        body: {
+            code: "700",
+            message: "Carousel is not existed"
+        }
+    },
 
 }
 

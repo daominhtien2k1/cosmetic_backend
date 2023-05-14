@@ -9,9 +9,13 @@ const Comment = require("../models/comment.model");
 const Report = require("../models/report.model");
 const Video = require("../models/video.model");
 
+const Event = require("../models/event.model");
+
 const { posts, comments } = require("./post.rawdata");
 const accounts = require("./account.rawdata");
 const videos = require("./video.rawdata");
+const events = require("./event.rawdata");
+
 
 var nouns = [
   "bird",
@@ -247,6 +251,15 @@ importDataRouter.post(
     res.send({ importVideos });
   })
 );
+
+importDataRouter.post("/events",
+  expressAsyncHandler(async (req, res) => {
+    await Event.remove({});
+    const importEvents = await Event.insertMany(events);
+    res.send({ events});
+  })
+);
+
 
 importDataRouter.post(
   "/friend",

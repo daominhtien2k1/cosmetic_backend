@@ -9,7 +9,7 @@ cloudinary.config({
 
 module.exports.uploads = (file) => {
     return new Promise((resolve, reject) => {
-        let folder = 'it4788/' + file.fieldname + 's';
+        let folder = 'datn/' + file.fieldname + 's';
 
         let stream = cloudinary.uploader.upload_stream(
             {
