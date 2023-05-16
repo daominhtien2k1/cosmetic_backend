@@ -8,78 +8,58 @@ const events = [
         "title": "Dùng thử với ưu đãi 100k Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch Sâu 140ml Gentle Black Facial Cleanser",
         "description": " <!DOCTYPE html>\n" +
             "<html>\n" +
-            "<head></head>\n" +
+            "<head>\n" +
+            "  <style>\n" +
+            "    /* Reset margin và padding cho ul và li */\n" +
+            "    ul, li {\n" +
+            "      margin-left: 12px;\n" +
+            "      padding: 0;\n" +
+            "    }\n" +
+            "  </style>\n" +
+            "</head>\n" +
             "<body>\n" +
-            "<p style=\"text-align: center;\"><img title=\"Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u\" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-1.jpg\" alt=\"Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u 140ml\" width=\"800\" /></p>\n" +
+            "<p style=\"text-align: center;\"><img title=\"Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u\" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-1.jpg\" alt=\"Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u 140ml\" width=\"360\" /></p>\n" +
             "<p>&nbsp;</p>\n" +
-            "<p style=\"text-align: center;\"><img title=\"Mua Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u tại Hasaki\" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-6.jpg\" alt=\"Mua Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u 140ml tại Hasaki \" width=\"800\" /></p>\n" +
+            "<p style=\"text-align: center;\"><img title=\"Mua Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u tại Hasaki\" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-6.jpg\" alt=\"Mua Sữa Rửa Mặt Klairs Dưỡng Ẩm, Dịu Nhẹ, Sạch S&acirc;u 140ml tại Hasaki \" width=\"360\" /></p>\n" +
             "<p>&nbsp;</p>\n" +
-            "<div style=\"margin-left: 50px\">\n" +
+            "<div style=\"margin-left: 10px\">\n" +
             "    <h2 style=\"font-size: 17px!important;font-weight: bolder;\">Loại da ph&ugrave; hợp:</h2>\n" +
             "    <ul>\n" +
-            "    <li>\n" +
-            "    <p>Sản phẩm th&iacute;ch hợp cho mọi loại da.&nbsp;</p>\n" +
-            "    </li>\n" +
+            "    <li>Sản phẩm th&iacute;ch hợp cho mọi loại da.&nbsp;</li>\n" +
             "    </ul>\n" +
             "    <h2 style=\"font-size: 17px!important;font-weight: bolder;\">Giải ph&aacute;p cho t&igrave;nh trạng da:&nbsp;</h2>\n" +
             "    <ul>\n" +
-            "    <li>\n" +
-            "    <p>Da thường gặp c&aacute;c vấn đề về mụn đầu đen.</p>\n" +
-            "    </li>\n" +
-            "    <li>\n" +
-            "    <p>Da xuất hiện c&aacute;c lớp sừng bong tr&oacute;c, da chết.</p>\n" +
-            "    </li>\n" +
-            "    <li>\n" +
-            "    <p>Da dầu thừa, lỗ ch&acirc;n l&ocirc;ng to.</p>\n" +
-            "    </li>\n" +
-            "    <li>\n" +
-            "    <p>Thường cảm gi&aacute;c kh&ocirc; căng sau khi rửa mặt.</p>\n" +
-            "    </li>\n" +
+            "    <li>Da thường gặp c&aacute;c vấn đề về mụn đầu đen.</li>\n" +
+            "    <li>Da xuất hiện c&aacute;c lớp sừng bong tr&oacute;c, da chết.</li>\n" +
+            "    <li>Da dầu thừa, lỗ ch&acirc;n l&ocirc;ng to.</li>\n" +
+            "    <li>Thường cảm gi&aacute;c kh&ocirc; căng sau khi rửa mặt.</li>\n" +
             "    </ul>\n" +
             "</div>\n" +
             "<p>&nbsp;</p>\n" +
-            "<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" title=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser \" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-4.jpg\" alt=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser 140ml \" width=\"800\" /></p>\n" +
+            "<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" title=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser \" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-4.jpg\" alt=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser 140ml \" width=\"360\" /></p>\n" +
             "<p>&nbsp;</p>\n" +
-            "<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" title=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser 140ml \" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-5.jpg\" alt=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser\" width=\"800\" /></p>\n" +
+            "<p><img style=\"display: block; margin-left: auto; margin-right: auto;\" title=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser 140ml \" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-5.jpg\" alt=\"Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser\" width=\"360\" /></p>\n" +
             "<p>&nbsp;</p>\n" +
-            "<div style=\"margin-left: 50px; margin-right: 40px\">\n" +
+            "<div style=\"margin-left: 10px; margin-right: 40px\">\n" +
             "<h2 style=\"font-size: 17px!important;font-weight: bolder;\">Ưu thế nổi bật:&nbsp;</h2>\n" +
             "<ul>\n" +
-            "<li>\n" +
-            "<p><strong>Phức hợp đen</strong> bao gồm <strong>đậu đen, th&igrave; l&agrave; đen, m&acirc;m x&ocirc;i đen, nấm truffle</strong> tăng cường sức mạnh h&agrave;ng r&agrave;o bảo vệ da, dưỡng ẩm dồi d&agrave;o, tăng khả năng chống oxy ho&aacute; v&agrave; hỗ trợ l&agrave;m dịu da.</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p>Kết cấu kem chuyển ho&aacute; th&agrave;nh bọt si&ecirc;u mịn l&agrave;m sạch 99,99% bụi mịn nhưng kh&ocirc;ng hề g&acirc;y kh&ocirc; da.</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p>T&iacute;nh Axit nhẹ kết hợp c&ugrave;ng độ<strong> pH chuẩn 5.5 - 6.5</strong> đem đến khả năng l&agrave;m sạch s&acirc;u nhưng vẫn bảo vệ được m&agrave;ng ẩm tự nhi&ecirc;n của da.</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p><strong>Ceramide</strong> gi&uacute;p duy tr&igrave; độ ẩm, ngăn ngừa t&igrave;nh trạng kh&ocirc; da v&agrave; k&iacute;ch ứng, bảo vệ da khỏi c&aacute;c t&aacute;c hại m&ocirc;i trường đồng thời ngừa l&atilde;o ho&aacute; da.</p>\n" +
-            "</li>\n" +
+            "<li><strong>Phức hợp đen</strong> bao gồm <strong>đậu đen, th&igrave; l&agrave; đen, m&acirc;m x&ocirc;i đen, nấm truffle</strong> tăng cường sức mạnh h&agrave;ng r&agrave;o bảo vệ da, dưỡng ẩm dồi d&agrave;o, tăng khả năng chống oxy ho&aacute; v&agrave; hỗ trợ l&agrave;m dịu da.</li>\n" +
+            "<li>Kết cấu kem chuyển ho&aacute; th&agrave;nh bọt si&ecirc;u mịn l&agrave;m sạch 99,99% bụi mịn nhưng kh&ocirc;ng hề g&acirc;y kh&ocirc; da.</li>\n" +
+            "<li>T&iacute;nh Axit nhẹ kết hợp c&ugrave;ng độ<strong> pH chuẩn 5.5 - 6.5</strong> đem đến khả năng l&agrave;m sạch s&acirc;u nhưng vẫn bảo vệ được m&agrave;ng ẩm tự nhi&ecirc;n của da.</li>\n" +
+            "<li><strong>Ceramide</strong> gi&uacute;p duy tr&igrave; độ ẩm, ngăn ngừa t&igrave;nh trạng kh&ocirc; da v&agrave; k&iacute;ch ứng, bảo vệ da khỏi c&aacute;c t&aacute;c hại m&ocirc;i trường đồng thời ngừa l&atilde;o ho&aacute; da.</li>\n" +
             "</ul>\n" +
             "</div>\n" +
             "<p>&nbsp;</p>\n" +
-            "<p style=\"text-align: center;\"><img title=\"Mua Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser tại Hasaki \" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-3.jpg\" alt=\"Mua Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser 140ml tại Hasaki \" width=\"800\" /></p>\n" +
+            "<p style=\"text-align: center;\"><img title=\"Mua Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser tại Hasaki \" src=\"https://media.hasaki.vn/wysiwyg/Chau/sua-rua-mat-klairs-duong-am-diu-nhe-sach-sau-140ml-3.jpg\" alt=\"Mua Sữa Rửa Mặt Klairs Gentle Black Facial Cleanser 140ml tại Hasaki \" width=\"360\" /></p>\n" +
             "<p>&nbsp;</p>\n" +
-            "<div style=\"margin-left: 50px\">\n" +
+            "<div style=\"margin-left: 10px\">\n" +
             "<h2 style=\"font-size: 17px!important;font-weight: bolder;\"><strong>Độ an to&agrave;n: </strong></h2>\n" +
             "<ul>\n" +
-            "<li>\n" +
-            "<p>Kh&ocirc;ng gluten g&acirc;y k&iacute;ch ứng</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p>Kh&ocirc;ng silicon b&iacute;t tắc lỗ ch&acirc;n l&ocirc;ng</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p>Kh&ocirc;ng cồn l&agrave;m kh&ocirc; m&agrave;ng ẩm tự nhi&ecirc;n</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p>Kh&ocirc;ng phẩm m&agrave;u nh&acirc;n tạo l&agrave;m xỉn m&agrave;u da</p>\n" +
-            "</li>\n" +
-            "<li>\n" +
-            "<p>Kh&ocirc;ng hương liệu g&acirc;y ngứa, nổi mụn vi&ecirc;m đỏ</p>\n" +
-            "</li>\n" +
+            "<li>Kh&ocirc;ng gluten g&acirc;y k&iacute;ch ứng</li>\n" +
+            "<li>Kh&ocirc;ng silicon b&iacute;t tắc lỗ ch&acirc;n l&ocirc;ng</li>\n" +
+            "<li>Kh&ocirc;ng cồn l&agrave;m kh&ocirc; m&agrave;ng ẩm tự nhi&ecirc;n</li>\n" +
+            "<li>Kh&ocirc;ng phẩm m&agrave;u nh&acirc;n tạo l&agrave;m xỉn m&agrave;u da</li>\n" +
+            "<li>Kh&ocirc;ng hương liệu g&acirc;y ngứa, nổi mụn vi&ecirc;m đỏ</li>\n" +
             "</ul>\n" +
             "</div>\n" +
             "<p>&nbsp;</p>\n" +

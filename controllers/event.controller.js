@@ -115,11 +115,15 @@ eventsController.get_event = expressAsyncHandler(async (req, res) => {
             title: event.title,
             time: timeRange,
             participationCondition: event.participationCondition,
-            description: event.described,
+            description: event.description,
             shortUrl: event.shortUrl
         };
 
-        res.json(eventInfo);
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: eventInfo
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
