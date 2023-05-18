@@ -10,12 +10,13 @@ const Report = require("../models/report.model");
 const Video = require("../models/video.model");
 
 const Event = require("../models/event.model");
-
+const { Brand, Category, Product, Review} = require("../models/product.model");
+const Reply = require("../models/reply.model");
 const { posts, comments } = require("./post.rawdata");
 const accounts = require("./account.rawdata");
 const videos = require("./video.rawdata");
 const events = require("./event.rawdata");
-
+const {brands, categories, products, reviews, replies} = require("./product.rawdata");
 
 var nouns = [
   "bird",
@@ -256,10 +257,49 @@ importDataRouter.post("/events",
   expressAsyncHandler(async (req, res) => {
     await Event.remove({});
     const importEvents = await Event.insertMany(events);
-    res.send({ events});
+    res.send({ importEvents });
   })
 );
 
+importDataRouter.post("/brands",
+    expressAsyncHandler(async (req, res) => {
+      await Brand.remove({});
+      const importBrands = await Brand.insertMany(brands);
+      res.send({ importBrands });
+    })
+);
+
+importDataRouter.post("/categories",
+    expressAsyncHandler(async (req, res) => {
+      await Category.remove({});
+      const importCategories = await Category.insertMany(categories);
+      res.send({ importCategories });
+    })
+);
+
+importDataRouter.post("/products",
+    expressAsyncHandler(async (req, res) => {
+      await Product.remove({});
+      const importProducts = await Product.insertMany(products);
+      res.send({ importProducts });
+    })
+);
+
+importDataRouter.post("/reviews",
+    expressAsyncHandler(async (req, res) => {
+      await Review.remove({});
+      const importReviews = await Review.insertMany(reviews);
+      res.send({ importReviews });
+    })
+);
+
+importDataRouter.post("/replies",
+    expressAsyncHandler(async (req, res) => {
+      await Reply.remove({});
+      const importReplies = await Reply.insertMany(replies);
+      res.send({ importReplies });
+    })
+);
 
 importDataRouter.post(
   "/friend",
@@ -313,6 +353,7 @@ importDataRouter.post(
     res.send({ all });
   })
 );
+
 
 // block_friend
 importDataRouter.post(

@@ -4,6 +4,7 @@ const reportSchema = new mongoose.Schema({
     reporter_id: {type: mongoose.Schema.Types.ObjectId, ref: 'accounts'},
     post_id: {type: mongoose.Schema.Types.ObjectId, ref: "posts"},
     video_id: {type: mongoose.Schema.Types.ObjectId, ref: 'videos'},
+    review_id: {type: mongoose.Schema.Types.ObjectId, ref: 'videos'},
     subject: {
         type: String,
         required: true,
