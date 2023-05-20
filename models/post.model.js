@@ -46,8 +46,19 @@ const postSchema = new mongoose.Schema({
     reports_post: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'reports'
-    }]
+    }],
+    classification: {
+        type: String,
+        enum: ["General", "Question", "Share experience"],
+        required: false,
+        default: "General"
+    },
+    reviewedProductList: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'products'
+    }],
 });
+
 postSchema.index({ described: "text"});
 postSchema.set('timestamps', true);
 

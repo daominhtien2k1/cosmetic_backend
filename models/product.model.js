@@ -108,6 +108,7 @@ const productSchema = new mongoose.Schema({
     category_id: {type: mongoose.Schema.Types.ObjectId, ref: 'categories', required: true},
     brand_id: {type: mongoose.Schema.Types.ObjectId, ref: 'brands', required: true},
     images: [{filename: String, url: String, publicId: String}],
+    // đổi thành lowPrice và highPrice xác định ngưỡng giá
     price: {
         type: Number,
         required: true,
@@ -118,6 +119,7 @@ const productSchema = new mongoose.Schema({
         required: false,
         default: 0
     },
+    // bỏ quantity và sold
     quantity: {
         type: Number,
         required: true,

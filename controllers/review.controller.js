@@ -171,4 +171,32 @@ reviewsController.get_list_reviews_star = expressAsyncHandler(async (req, res) =
 
 });
 
+reviewsController.get_list_recent_reviews = expressAsyncHandler(async (req, res) => {
+    const {product_id} = req.query;
+
+    const limit = 2;
+
+    if (!product_id) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+
+
+    try {
+        const reviews = await Review.find({product_id: product_id}).limit(limit).sort("-createdAt");
+        // console.log(reviews.map(review => review._id));
+        if (reviews.length < 1) {
+            return setAndSendResponse(res, responseError.NO_DATA);
+        }
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: {
+                reviews
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
 module.exports = reviewsController;

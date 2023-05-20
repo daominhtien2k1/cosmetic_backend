@@ -170,7 +170,8 @@ postsController.get_list_posts = expressAsyncHandler(async (req, res) => {
                     is_blocked: isBlocked,
                     can_edit: req.account._id.equals(post.account_id._id) ? (post.banned ? false : true) : false,
                     banned: post.banned,
-                    can_comment: post.canComment
+                    can_comment: post.canComment,
+                    classification: post.classification,
                 };
                 if (post.images.length !== 0) {
                     subResult.images = post.images.map((image) => {
