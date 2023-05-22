@@ -14,8 +14,8 @@ accountRouter.post(
     accountsController.set_request_friend
 );
 accountRouter.get(
-    "/get_requested_friends", auth,
-    accountsController.get_requested_friends
+    "/get_list_friend_request_received", auth,
+    accountsController.get_list_friend_request_received
 );
 
 accountRouter.post(

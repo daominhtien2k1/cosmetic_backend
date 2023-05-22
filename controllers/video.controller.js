@@ -62,21 +62,6 @@ videosController.get_list_videos = expressAsyncHandler(async (req, res) => {
         })
     }
 
-    // const result = {
-    //     videos: videos.map(video => {
-    //         return {
-    //             described: video.described,
-    //             video: {
-    //                 filename: video.video.filename,
-    //                 url: video.video.url,
-    //                 publicId: video.video.publicId
-    //             },
-    //             isAdsCampaign: video.isAdsCampaign,
-    //             likes: video.likes,
-    //             likedAccounts: video.likedAccounts,
-    //         }
-    //     })
-    // }
     res.status(responseError.OK.statusCode).json({
         code: responseError.OK.body.code,
         message: responseError.OK.body.message,
@@ -99,8 +84,7 @@ videosController.like_video = expressAsyncHandler(async (req, res) => {
 
     try {
         let video = await Video.findById(id);
-        // console.log("đã tìm được video")
-        // console.log(video)
+
         if (video == null) {
             return setAndSendResponse(res, responseError.VIDEO_IS_NOT_EXISTED);
         }
@@ -112,12 +96,10 @@ videosController.like_video = expressAsyncHandler(async (req, res) => {
         )
             return setAndSendResponse(res, responseError.HAS_BEEN_LIKED);
         else {
-            console.log("đã qua")
             await Video.findOneAndUpdate(
                 {_id: id},
                 {$push: {likedAccounts: {_id: account._id}}}
             );
-            console.log("đã qua")
             var updatedVideo = await Video.findOneAndUpdate({_id: id}, {$inc: {likes: 1}}, { new: true });
             res.status(responseError.OK.statusCode).json({
                 code: responseError.OK.body.code,

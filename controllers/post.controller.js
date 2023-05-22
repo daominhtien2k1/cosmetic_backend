@@ -89,7 +89,8 @@ postsController.get_post = expressAsyncHandler(async (req, res) => {
             is_blocked: isBlocked,
             can_edit: req.account._id.equals(author._id) ? (post.banned ? false : true) : false,
             banned: post.banned,
-            can_comment: post.canComment
+            can_comment: post.canComment,
+            classification: post.classification,
         };
         if (post.images.length !== 0) {
             result.images = post.images.map((image) => {
@@ -422,7 +423,8 @@ postsController.add_post = expressAsyncHandler(async (req, res) => {
             is_blocked: false,
             can_edit: true,
             banned: postResult.banned,
-            can_comment: postResult.canComment
+            can_comment: postResult.canComment,
+            classification: post.classification,
         };
         if (postResult.images.length !== 0) {
             result.images = postResult.images.map((image) => {
@@ -507,8 +509,6 @@ postsController.delete_post = expressAsyncHandler(async (req, res) => {
         setAndSendResponse(res, responseError.CAN_NOT_CONNECT_TO_DB);
     }
 });
-
-
 
 postsController.edit_post = expressAsyncHandler(async (req, res) => {
     var {id, status, image_del, described} = req.body;

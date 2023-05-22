@@ -47,8 +47,8 @@ eventsController.get_list_events = expressAsyncHandler(async (req, res) => {
         });
 
         const eventLists = {
-            happeningEventList: happeningEventList,
-            endedEventList: endedEventList
+            happeningEvents: happeningEventList,
+            endedEvents: endedEventList
         };
 
         if (searchBy == null) {
@@ -63,7 +63,7 @@ eventsController.get_list_events = expressAsyncHandler(async (req, res) => {
                 code: responseError.OK.body.code,
                 message: responseError.OK.body.message,
                 data: {
-                    happeningEventList: happeningEventList
+                    happeningEvents: happeningEventList
                 }
                 // result
             });
@@ -72,7 +72,7 @@ eventsController.get_list_events = expressAsyncHandler(async (req, res) => {
                 code: responseError.OK.body.code,
                 message: responseError.OK.body.message,
                 data: {
-                    endedEventList: endedEventList
+                    endedEvents: endedEventList
                 }
                 // result
             });

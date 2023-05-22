@@ -188,7 +188,7 @@ const responseError = {
             message: "Failed to delete request friend"
         }
     },
-    ACCECPT_REQUEST_FRIEND_FAILED: {
+    ACCEPT_REQUEST_FRIEND_FAILED: {
         statusCode: 400,
         body: {
             code: "504",
