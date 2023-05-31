@@ -10,13 +10,13 @@ const Report = require("../models/report.model");
 const Video = require("../models/video.model");
 
 const Event = require("../models/event.model");
-const { Brand, Category, Product, Review} = require("../models/product.model");
+const { Brand, Category, Product, Review, Characteristic} = require("../models/product.model");
 const Reply = require("../models/reply.model");
 const { posts, comments } = require("./post.rawdata");
 const accounts = require("./account.rawdata");
 const videos = require("./video.rawdata");
 const events = require("./event.rawdata");
-const {brands, categories, products, reviews, replies} = require("./product.rawdata");
+const {brands, categories, products, characteristics, reviews, replies} = require("./product.rawdata");
 
 var nouns = [
   "bird",
@@ -282,6 +282,14 @@ importDataRouter.post("/products",
       await Product.remove({});
       const importProducts = await Product.insertMany(products);
       res.send({ importProducts });
+    })
+);
+
+importDataRouter.post("/characteristics",
+    expressAsyncHandler(async (req, res) => {
+      await Characteristic.remove({});
+      const importCharacteristics = await Characteristic.insertMany(characteristics);
+      res.send({ importCharacteristics });
     })
 );
 

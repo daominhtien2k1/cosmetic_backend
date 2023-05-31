@@ -153,13 +153,13 @@ const products = [
                 publicId: "",
             },
         ],
-        price: 18000,
-        discount: 0,
-        quantity: 250,
-        sold: 127,
+        lowPrice: 18000,
+        highPrice: 20000,
         available: true,
         type: "Normal",
-        loves: 0,
+        lovedAccounts: ["63bbff18fc13ae649300082a"],
+        viewedAccounts: ["63bbff18fc13ae649300082a"],
+        loves: 1,
         reviews: 2,
         rating: 4.1,
         recentReviewList: [],
@@ -204,13 +204,13 @@ const products = [
                 publicId: "",
             }
         ],
-        price: 17000,
-        discount: 0,
-        quantity: 2000,
-        sold: 1019,
+        lowPrice: 17000,
+        highPrice: 21000,
         available: true,
         type: "Normal",
-        loves: 0,
+        lovedAccounts: ["63bbff18f  c13ae649300082a"],
+        viewedAccounts: ["63bbff18fc13ae649300082a"],
+        loves: 1,
         reviews: 3,
         rating: 4.1,
         recentReviewList: [],
@@ -255,13 +255,13 @@ const products = [
                 publicId: "",
             },
         ],
-        price: 18000,
-        discount: 0,
-        quantity: 250,
-        sold: 127,
+        lowPrice: 19000,
+        highPrice: 22000,
         available: true,
         type: "Normal",
-        loves: 0,
+        lovedAccounts: ["63bbff18fc13ae649300082a"],
+        viewedAccounts: ["63bbff18fc13ae649300082a"],
+        loves: 1,
         reviews: 2,
         rating: 4.1,
         recentReviewList: [],
@@ -306,13 +306,13 @@ const products = [
                 publicId: "",
             },
         ],
-        price: 16000,
-        discount: 0,
-        quantity: 350,
-        sold: 147,
+        lowPrice: 20000,
+        highPrice: 22000,
         available: true,
         type: "Normal",
-        loves: 0,
+        lovedAccounts: ["63bbff18fc13ae649300082a"],
+        viewedAccounts: ["63bbff18fc13ae649300082a"],
+        loves: 1,
         reviews: 3,
         rating: 4.1,
         recentReviewList: [],
@@ -325,10 +325,99 @@ const products = [
 
 ];
 
+const characteristics = [
+    {
+        _id: "6475d20319f32362c05956ec",
+        criteria: "Làm sáng da",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956ed",
+        criteria: "Kháng khuẩn",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956ee",
+        criteria: "Chống tia UV",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956ef",
+        criteria: "Không gây kích ứng",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f0",
+        criteria: "Chất liệu",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f1",
+        criteria: "Giá cả",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f2",
+        criteria: "Hiệu quả",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f3",
+        criteria: "An toàn",
+        product_id: "646398c7bc8ef0469c38d7ba",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f4",
+        criteria: "Chất liệu",
+        product_id: "646398c7bc8ef0469c38d7bb",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f5",
+        criteria: "Giá cả",
+        product_id: "646398c7bc8ef0469c38d7bb",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f6",
+        criteria: "Hiệu quả",
+        product_id: "646398c7bc8ef0469c38d7bb",
+        reviews: 0,
+        ratings: 0
+    },
+    {
+        _id: "6475d20319f32362c05956f7",
+        criteria: "An toàn",
+        product_id: "646398c7bc8ef0469c38d7bb",
+        reviews: 0,
+        ratings: 0
+    },
+
+];
+
 // 1 user chỉ được đánh giá 1 sản phẩm 1 lần
 const reviews = [
     {
         _id: "6465eaca7372cc1938755d99",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7ba",
         userReview_id: "63bbff18fc13ae6493000833",
         rating: 4,
@@ -381,6 +470,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da0",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7ba",
         userReview_id: "63bbff18fc13ae649300082b",
         rating: 4,
@@ -404,6 +494,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da1",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7ba",
         userReview_id: "63bbff18fc13ae6493000831",
         rating: 2,
@@ -436,6 +527,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da2",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7bb",
         userReview_id: "63bbff18fc13ae6493000831",
         rating: 2,
@@ -468,6 +560,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da3",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7be",
         userReview_id: "63bbff18fc13ae649300082b",
         rating: 2,
@@ -483,6 +576,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da4",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7bc",
         userReview_id: "63bbff18fc13ae649300082b",
         rating: 4,
@@ -499,6 +593,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da5",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7bb",
         userReview_id: "63bbff18fc13ae649300082b",
         rating: 5,
@@ -524,6 +619,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da6",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7ba",
         userReview_id: "63bbff18fc13ae649300082f",
         rating: 4,
@@ -550,6 +646,7 @@ const reviews = [
     },
     {
         _id: "6465eaca7372cc1938755da7",
+        classification: "Standard",
         product_id: "646398c7bc8ef0469c38d7bb",
         userReview_id: "63bbff18fc13ae649300082f",
         rating: 1,
@@ -567,6 +664,107 @@ const reviews = [
         canReply: false,
         banned: false,
         reports_review: [],
+    },
+    {
+        _id: "6465eaca7372cc1938755da8",
+        classification: "Detail",
+        characteristic_reviews: [
+            {
+                characteristic_id: "6475d20319f32362c05956ec",
+                point: 4,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956ed",
+                point: 3,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956ee",
+                point: 5,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956ef",
+                point: 5,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f0",
+                point: 2,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f1",
+                point: 2,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f2",
+                point: 3,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f3",
+                point: 5,
+            },
+        ],
+        product_id: "646398c7bc8ef0469c38d7ba",
+        userReview_id: "63bbff18fc13ae649300082a",
+        rating: 4,
+        title: "Buồn",
+        content: "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat.",
+        settedUsefulAccounts: [],
+        replyList: [],
+        usefuls: 0,
+        replies: 0,
+        canReply: false,
+        banned: false,
+        reports_review: []
+    },
+    {
+        _id: "6465eaca7372cc1938755da9",
+        classification: "Detail",
+        characteristic_reviews: [
+            {
+                characteristic_id: "6475d20319f32362c05956ec",
+                point: 3,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956ed",
+                point: 2,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956ee",
+                point: 4,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956ef",
+                point: 4,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f0",
+                point: 3,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f1",
+                point: 5,
+            },
+            {
+                characteristic_id: "6475d20319f32362c05956f2",
+                point: 5,
+            },
+            // xóa cái này đi để có thể thử testcase
+            {
+                characteristic_id: "6475d20319f32362c05956f3",
+                point: 1,
+            },
+        ],
+        product_id: "646398c7bc8ef0469c38d7ba",
+        userReview_id: "63bbff18fc13ae649300082c",
+        rating: 5,
+        title: "Buồn",
+        content: "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat.",
+        settedUsefulAccounts: [],
+        replyList: [],
+        usefuls: 0,
+        replies: 0,
+        canReply: false,
+        banned: false,
+        reports_review: []
     },
 ];
 
@@ -707,4 +905,4 @@ const replies = [
     },
 ];
 
-module.exports = {brands, categories, products, reviews, replies};
+module.exports = {brands, categories, products, characteristics, reviews, replies};

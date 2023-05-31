@@ -108,26 +108,14 @@ const productSchema = new mongoose.Schema({
     category_id: {type: mongoose.Schema.Types.ObjectId, ref: 'categories', required: true},
     brand_id: {type: mongoose.Schema.Types.ObjectId, ref: 'brands', required: true},
     images: [{filename: String, url: String, publicId: String}],
-    // đổi thành lowPrice và highPrice xác định ngưỡng giá
-    price: {
+    lowPrice: {
         type: Number,
         required: true,
         default: 0
     },
-    discount: {
+    highPrice: {
         type: Number,
         required: false,
-        default: 0
-    },
-    // bỏ quantity và sold
-    quantity: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    sold: {
-        type: Number,
-        require: false,
         default: 0
     },
     // sản phẩm còn bán hay không thôi, ít tác dụng
@@ -142,6 +130,8 @@ const productSchema = new mongoose.Schema({
         enum: ['Featured', 'Upcoming', 'New', 'Normal'],
         required: false
     },
+    lovedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
+    viewedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
     // số lượng yêu thích sản phẩm (tổng nhiều người) --> Tạo thêm Schema LoveProductUser lưu giữ refer của product và userid
     loves: {
         type: Number,
@@ -224,20 +214,37 @@ const couponSchema = new mongoose.Schema({
 
 // 1 Product có nhiều Review (lúc này bắt chước Product - Comment) , 1 Review có nhiều Reply (lúc này bắt chước Product - Comment)
 const reviewSchema = new mongoose.Schema({
+    /*  Quick: rating
+        Standard: rating, title, content
+        Detail: rating, title, content, characteristic_reviews,
+        Instruction: title, content
+    */
+    classification: {
+        type: String,
+        enum: ["Quick", "Standard", "Detail", "Instruction"],
+        required: false,
+        default: "Standard"
+    },
+    characteristic_reviews: [
+        {
+            characteristic_id: {type: mongoose.Schema.Types.ObjectId, ref: 'characteristics'},
+            point: {type: Number}
+        }
+    ],
     product_id: {type: mongoose.Schema.Types.ObjectId, ref: 'products'},
     userReview_id: {type: mongoose.Schema.Types.ObjectId, ref: 'accounts'},
     rating: {
         type: Number,
-        required: true
+        required: false
     },
     title: {
         type: String,
-        required: true
+        required: false
     },
     // tương tự described
     content: {
         type: String,
-        required: true
+        required: false
     },
     images: [{filename: String, url: String, publicId: String}],
     video: {filename: String, url: String, publicId: String},
@@ -278,8 +285,32 @@ const reviewSchema = new mongoose.Schema({
         ref: 'reports'
     }]
 });
-
 reviewSchema.set('timestamps', true);
+
+const characteristicSchema = new mongoose.Schema({
+    // Chất liệu - Giá cả - Hiệu quả - An toàn là 4 cái mọi product nên có
+    // Ngoài ra còn có: Làm sáng da - Kháng khuẩn - Chống tia UV - Không gây kích ứng - Màu son - Mùi hương
+    // Tạm thời chỉ đánh giá bằng thang đo từ 1-5 thôi
+    criteria: {
+        type: String,
+        required: true
+    },
+    product_id: {type: mongoose.Schema.Types.ObjectId, ref: 'products'},
+    // số lượng đánh giá
+    reviews: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    // trung bình đánh giá
+    ratings: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+});
+
+const Characteristic = mongoose.model('Characteristic', characteristicSchema);
 
 const Review = mongoose.model('Review', reviewSchema);
 
@@ -298,5 +329,6 @@ module.exports = {
     Brand,
     Category,
     Product,
-    Review
+    Review,
+    Characteristic
 }

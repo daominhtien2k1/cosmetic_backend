@@ -1,7 +1,7 @@
 const express = require("express");
 const expressAsyncHandler = require("express-async-handler");
 
-const {Carousel, Product, Brand, Review} = require('../models/product.model');
+const {Carousel, Product, Brand, Review, Characteristic} = require('../models/product.model');
 
 const {setAndSendResponse, responseError, callRes} = require('../constants/response_code');
 const cloudinary = require("../config/cloudinaryConfig");
@@ -68,9 +68,9 @@ productsController.add_carousel = expressAsyncHandler(async (req, res) => {
 
 productsController.get_popular_products = expressAsyncHandler(async (req, res) => {
     try {
-        const limit = req.query.limit || 2; // Giới hạn số lượng sản phẩm (mặc định là 2)
+        const limit = req.query.limit || 4; // Giới hạn số lượng sản phẩm (mặc định là 2)
         const popularProducts = await Product.find({})
-            .sort({ sold: -1 }) // Sắp xếp theo số lượng đã bán giảm dần
+            .sort({ loves: -1 }) // Sắp xếp theo số lượng yêu thích giảm dần
             .limit(parseInt(limit)); // Giới hạn số lượng sản phẩm trả về
         let result = popularProducts.map(product => {
             return {
@@ -81,7 +81,7 @@ productsController.get_popular_products = expressAsyncHandler(async (req, res) =
                 price: product.price,
                 reviews: product.reviews,
                 rating: product.rating,
-                sold: product.sold
+                loves: product.loves
             };
         });
 
@@ -109,18 +109,22 @@ productsController.get_product = expressAsyncHandler(async (req, res) => {
             return setAndSendResponse(res, responseError.POST_IS_NOT_EXISTED);
         }
 
+        let lovedAccountIDArray = product.lovedAccounts.map(x => x._id);
+        let viewedAccountIDArray = product.viewedAccounts.map(x => x._id);
+
         let result = {
             id: product._id,
+            name: product.name,
             origin: product.origin,
             guarantee: product.guarantee,
             expiredYear: product.expiredYear,
             description: product.description,
-            quantity: product.quantity,
-            sold: product.sold,
             available: product.available,
-            oldPrice: product.price,
-            newPrice: product.price * (1 - product.discount/100),
+            lowPrice: product.lowPrice,
+            highPrice: product.highPrice,
             loves: product.loves,
+            isLoved: lovedAccountIDArray.includes(req.account._id),
+            isViewed: lovedAccountIDArray.includes(req.account._id),
             brand: {
                 id: product.brand_id._id,
                 name:  product.brand_id.name,
@@ -152,7 +156,7 @@ productsController.get_product = expressAsyncHandler(async (req, res) => {
         ]);
 
         result.reviews = reviewCount;
-        result.rating = averageRating[0] ? averageRating[0].average : 0;
+        result.rating = averageRating[0] ? parseFloat(averageRating[0].average.toFixed(1)) : 0.0;
         res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
             message: responseError.OK.body.message,
@@ -179,21 +183,45 @@ productsController.get_relate_products = expressAsyncHandler(async (req, res) =>
             .populate({
                 path: 'relateProductList',
                 model: Product,
-                select: 'brand_id name images reviews rating price',
+                select: 'brand_id name images reviews rating loves',
                 populate: { path: 'brand_id', model: Brand, select: 'name' }
             })
             .exec();
 
         // Tạo một mảng kết quả chỉ với thông tin cần thiết
         const result = relateProducts.relateProductList.map(product => ({
-            _id: product._id,
+            id: product._id,
             brand_name: product.brand_id.name,
             name: product.name,
             image: product.images[0],
             reviews: product.reviews,
             rating: product.rating,
-            price: product.price
+            loves: product.loves
         }));
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: result
+        });
+
+    } catch (err) {
+        console.log(err);
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+productsController.get_list_characteristics = expressAsyncHandler(async (req, res) => {
+    const {product_id} = req.query;
+    if (product_id === undefined) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(product_id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    try {
+        const characteristics = await Characteristic.find({product_id: product_id}).select("criteria -_id");
+
+        let result = characteristics.map(c => c.criteria).filter(c => ((c!="Chất liệu") && (c!="Giá cả") && (c!="Hiệu quả") && (c!="An toàn")));
 
         res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
