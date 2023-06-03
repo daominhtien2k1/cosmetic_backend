@@ -217,7 +217,7 @@ const reviewSchema = new mongoose.Schema({
     /*  Quick: rating
         Standard: rating, title, content
         Detail: rating, title, content, characteristic_reviews,
-        Instruction: title, content
+        Instruction: title, content // ý nghĩa: Chia sẻ cảm nhận khi dùng sản phẩm (mang tính chất quảng cáo, chú ý ở Post chia sẻ kinh nghiệm thì thường ngắn hơn) + Hướng dẫn sử dụng
     */
     classification: {
         type: String,

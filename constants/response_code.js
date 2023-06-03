@@ -230,6 +230,21 @@ const responseError = {
             message: "Carousel is not existed"
         }
     },
+    REVIEW_IS_BANNED: {
+        statusCode: 400,
+        body: {
+            code: "701",
+            message: "Review is banned"
+        }
+    },
+    REVIEW_IS_NOT_EXISTED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "702",
+            message: "Review is not existed"
+        }
+    }
+
 
 }
 
