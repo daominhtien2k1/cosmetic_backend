@@ -46,13 +46,24 @@ reviewsController.get_review = expressAsyncHandler(async (req, res) => {
             return setAndSendResponse(res, responseError.REVIEW_IS_BANNED);
         }
 
-        let author = await Account.findById(review.userReview_id._id);
 
-        const isBlocked = author.blockedAccounts.findIndex((element) => {
+
+        //Check User is being blocked by Review's author
+        const reviewAuthor = await Account.findById(review.userReview_id._id);
+        const isBlocked = reviewAuthor.blockedAccounts.findIndex((element) => {
             return element.account.toString() === req.account._id.toString()
         }) !== -1;
         if (isBlocked) return callRes(res, responseError.NOT_ACCESS, 'Người viết đã chặn bạn, do đó không thể lấy thông tin review');
 
+        //Check User is blocking Review's author
+        const blockingList = req.account.blockedAccounts.map(x => x.account);
+        const isBlocking = req.account.blockedAccounts.findIndex((element) => {
+            return element.account.toString() === reviewAuthor._id.toString()
+        }) !== -1;
+
+        if (isBlocking) return callRes(res, responseError.NOT_ACCESS, 'Bạn đã chặn người viết, do đó không thể lấy thông tin review');
+
+        // Quyết định giữ nguyên trường is_blocked để biết đâu có thể tái sử dụng model, và cho giống với get_list_reviews
         let result = {
             id: review._id,
             product: review.product_id,
@@ -112,7 +123,7 @@ reviewsController.get_review = expressAsyncHandler(async (req, res) => {
             data: result
         });
     } catch (error) {
-        console.log(error);
+        console.log(error)
         return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
 
@@ -154,10 +165,16 @@ reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
             return setAndSendResponse(res, responseError.NO_DATA);
         }
 
+        // quyết định trả về tất cả các bài review kể cả bị blocked, để last_index hoạt động dễ hơn, và sẽ lọc trong frontend
+        // và trả lại tất cả bài viết để đếm số lượng tất cả
         let result = {
             reviews: await Promise.all(sliceReviews.map(async review => {
                 const isBlocked = review.userReview_id.blockedAccounts.findIndex((element) => {
                     return element.account.toString() === req.account._id.toString()
+                }) !== -1;
+
+                const isBlocking = req.account.blockedAccounts.findIndex((element) => {
+                    return element.account.toString() === review.userReview_id._id.toString()
                 }) !== -1;
 
                 let subResult;
@@ -179,7 +196,7 @@ reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
                             avatar: review.userReview_id.getAvatar()
                         },
                         is_setted_useful: review.settedUsefulAccounts.includes(req.account._id),
-                        is_blocked: isBlocked,
+                        is_blocked: isBlocked || isBlocking,
                         can_edit: req.account._id.equals(review.userReview_id._id) ? (review.banned ? false : true) : false,
                         banned: review.banned,
                         can_reply: review.canReply
@@ -225,7 +242,7 @@ reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
                             avatar: review.userReview_id.getAvatar()
                         },
                         is_setted_useful: review.settedUsefulAccounts.includes(req.account._id),
-                        is_blocked: isBlocked,
+                        is_blocked: isBlocked || isBlocking,
                         can_edit: req.account._id.equals(review.userReview_id._id) ? (review.banned ? false : true) : false,
                         banned: review.banned,
                         can_reply: review.canReply
@@ -308,6 +325,10 @@ reviewsController.get_list_instruction_reviews = expressAsyncHandler(async (req,
                     return element.account.toString() === req.account._id.toString()
                 }) !== -1;
 
+                const isBlocking = req.account.blockedAccounts.findIndex((element) => {
+                    return element.account.toString() === review.userReview_id._id.toString()
+                }) !== -1;
+
                 let subResult;
 
                 if (review.classification == "Instruction") {
@@ -326,7 +347,7 @@ reviewsController.get_list_instruction_reviews = expressAsyncHandler(async (req,
                             avatar: review.userReview_id.getAvatar()
                         },
                         is_setted_useful: review.settedUsefulAccounts.includes(req.account._id),
-                        is_blocked: isBlocked,
+                        is_blocked: isBlocked || isBlocking,
                         can_edit: req.account._id.equals(review.userReview_id._id) ? (review.banned ? false : true) : false,
                         banned: review.banned,
                         can_reply: review.canReply

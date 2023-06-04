@@ -413,7 +413,7 @@ const characteristics = [
 
 ];
 
-// 1 user chỉ được đánh giá 1 sản phẩm 1 lần
+// 1 user chỉ được đánh giá 1 sản phẩm 1 lần (Quick/Standard/Detail 1 lần: Quick được chuyển sang Standard được chuyển sang Detail, Instruction vô hạn)
 const reviews = [
     {
         _id: "6465eaca7372cc1938755d99",
@@ -784,7 +784,7 @@ const replies = [
     },
     {
         _id: "6465fcb89d40d52ff8b805cc",
-        review_id: "6465eaca7372cc1938755d9e",
+        review_id: "6465eaca7372cc1938755d99",
         userReply_id: "63bbff18fc13ae649300082b",
         content:
             "Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros. Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue."
