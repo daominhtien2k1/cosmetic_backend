@@ -20,7 +20,7 @@ const classificationArray =  ["Quick", "Standard", "Detail", "Instruction"];
 
 const reviewsController = {};
 
-// Standard, Detail, Instruction
+// Standard, Detail, Instruction - phục vụ detail review container
 reviewsController.get_review = expressAsyncHandler(async (req, res) => {
     const id = req.params.id;
 
@@ -130,7 +130,7 @@ reviewsController.get_review = expressAsyncHandler(async (req, res) => {
 
 });
 
-// Standard & Detail
+// Standard & Detail - do instruction ở UI riêng
 reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
     var {index, count, last_id} = req.query;
@@ -545,6 +545,7 @@ reviewsController.product_characteristic_statistics = expressAsyncHandler(async 
     });
 });
 
+// add and update
 reviewsController.add_review = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
     let {classification, characteristic_reviews, rating, title, content } = req.body;
@@ -633,7 +634,7 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
             let uploadPromises = image.map(cloudinary.uploads);
             let data = await Promise.all(uploadPromises);
             //xửa lý data
-            post.images = data;
+            review.images = data;
         } catch (err) {
             //lỗi không xác định
             // console.log(err);
@@ -663,7 +664,7 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
         try {
             let data = await cloudinary.uploads(video[0]);
             //xử lý data
-            post.video = data;
+            review.video = data;
         } catch (error) {
             //lỗi không xác định
             return setAndSendResponse(res, responseError.UPLOAD_FILE_FAILED);
@@ -681,41 +682,51 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
     let savedReview;
 
     try {
-        const existedReview = await Review.findOne({product_id: product_id, userReview_id: req.account._id, classification: { $in: ["Quick", "Standard", "Detail"] } });
-        if (existedReview == null) {
-            try {
-                savedReview = await review.save();
-            } catch (e) {
-                return setAndSendResponse(res, responseError.PROBLEM_WITH_EXISTED_REVIEWED);
-            }
-        } else {
-            if (existedReview.classification === "Detail") {
-                // nếu gửi lên là Quick, Standard, Detail thì giữ nguyên classification là Detail
-                if (title) existedReview.title = review.title;
-                if (content) existedReview.content = review.content;
-                existedReview.rating = review.rating;
-                if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
-                savedReview = await existedReview.save();
-            }
+        if (review.classification !== "Instruction") {
+            const existedReview = await Review.findOne({
+                product_id: product_id,
+                userReview_id: req.account._id,
+                classification: {$in: ["Quick", "Standard", "Detail"]}
+            });
+            if (existedReview == null) {
+                try {
+                    savedReview = await review.save();
+                } catch (e) {
+                    return setAndSendResponse(res, responseError.PROBLEM_WITH_EXISTED_REVIEWED);
+                }
+            } else {
+                if (existedReview.classification === "Detail") {
+                    // nếu gửi lên là Quick, Standard, Detail thì giữ nguyên classification là Detail
+                    if (title) existedReview.title = review.title;
+                    if (content) existedReview.content = review.content;
+                    existedReview.rating = review.rating;
+                    if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
+                    savedReview = await existedReview.save();
+                }
 
-            if (existedReview.classification === "Quick") {
-                // nếu gửi lên là Quick, Standard, Detail thì nâng lên classification của chính cái gửi lên
-                existedReview.classification = review.classification;
-                if (title) existedReview.title = review.title;
-                if (content) existedReview.content = review.content;
-                existedReview.rating = review.rating;
-                if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
-                savedReview = await existedReview.save();
-            }
+                if (existedReview.classification === "Quick") {
+                    // nếu gửi lên là Quick, Standard, Detail thì nâng lên classification của chính cái gửi lên
+                    existedReview.classification = review.classification;
+                    if (title) existedReview.title = review.title;
+                    if (content) existedReview.content = review.content;
+                    existedReview.rating = review.rating;
+                    if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
+                    savedReview = await existedReview.save();
+                }
 
-            if (existedReview.classification === "Standard") {
-                if (classification === "Detail" ) existedReview.classification = review.classification; // nâng lên, còn không thì giữ nguyên là Standard
-                if (title) existedReview.title = review.title;
-                if (content) existedReview.content = review.content;
-                existedReview.rating = review.rating;
-                if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
-                savedReview = await existedReview.save();
+                if (existedReview.classification === "Standard") {
+                    if (classification === "Detail") existedReview.classification = review.classification; // nâng lên, còn không thì giữ nguyên là Standard
+                    if (title) existedReview.title = review.title;
+                    if (content) existedReview.content = review.content;
+                    existedReview.rating = review.rating;
+                    if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
+                    savedReview = await existedReview.save();
+                }
             }
+        }
+
+        if (review.classification === "Instruction") {
+            savedReview = await review.save();
         }
 
         let reviewResult = await Review.findById(savedReview._id);
@@ -780,6 +791,81 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
 
     } catch (e) {
         console.log(e);
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+
+});
+
+// Quick, Standard, Detail - phục vụ để update lại review: bao gồm rating, title, content, characteristic_reviews. Instruction không cần retrieve
+reviewsController.retrieve_review = expressAsyncHandler(async (req, res) => {
+    const {product_id} = req.query;
+
+    if (!product_id) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(product_id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    // người dùng bị khóa tài khoản
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try {
+        const review = await Review.findOne({product_id: product_id, userReview_id: req.account._id, classification: { $in: ["Quick", "Standard", "Detail"] } });
+
+        if (review == null) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_NOT_EXISTED);
+        }
+
+        if (review.banned) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_BANNED);
+        }
+
+
+        // Quyết định giữ nguyên trường is_blocked để biết đâu có thể tái sử dụng model, và cho giống với get_list_reviews
+        let result = {
+            id: review._id,
+            classification: review.classification,
+            rating : review.rating
+        };
+
+        if (review.classification != "Quick") {
+            result.title = review.title;
+            result.content = review.content;
+        }
+
+        if (review.classification == "Detail") {
+            let characteristic_reviews_result = [];
+            for (let characteristic_review of review["characteristic_reviews"]) {
+                let characteristic = await Characteristic.findOne({_id: characteristic_review["characteristic_id"]});
+                characteristic_reviews_result.push({
+                    characteristic_id: characteristic._id,
+                    criteria: characteristic.criteria,
+                    point: characteristic_review["point"]
+                })
+            }
+            result.characteristic_reviews = characteristic_reviews_result;
+        }
+
+
+        if (review.images.length !== 0) {
+            result.images = review.images.map((image) => {
+                let {url, publicId} = image;
+                return {url: url, publicId: publicId};
+            });
+        }
+        if (review.video && review.video.url != undefined) {
+            result.video = {
+                url: review.video.url,
+                publicId: review.video.publicId
+            }
+        }
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: result
+        });
+    } catch (error) {
+        console.log(error)
         return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
 

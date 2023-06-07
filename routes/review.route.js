@@ -12,5 +12,6 @@ reviewRouter.get("/get_list_recent_reviews", auth, reviewsController.get_list_re
 reviewRouter.get("/product_characteristic_statistics", auth, reviewsController.product_characteristic_statistics);
 reviewRouter.post("/add_review", uploadFile, auth, reviewsController.add_review);
 reviewRouter.get("/get_review/:id", auth, reviewsController.get_review);
+reviewRouter.get("/retrieve_review", auth, reviewsController.retrieve_review);
 
 module.exports = reviewRouter;
