@@ -547,7 +547,21 @@ reviewsController.product_characteristic_statistics = expressAsyncHandler(async 
 
 reviewsController.add_review = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
-    const {classification, characteristic_reviews, rating, title, content } = req.body;
+    let {classification, characteristic_reviews, rating, title, content } = req.body;
+
+    // console.log(typeof characteristic_reviews);
+
+    // send bằng app, cần chuyển từ JSON string sang JSON object
+    if (typeof characteristic_reviews === 'string') {
+        var temp = JSON.parse(characteristic_reviews);
+        characteristic_reviews = temp;
+    }
+    // send bằng post man
+    if (typeof characteristic_reviews === 'object') {
+
+    }
+
+    // console.log(typeof characteristic_reviews);
 
     let image, video;
     if (req.files) {
@@ -664,8 +678,46 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
     if (rating) review.rating = rating;
     if (characteristic_reviews) review.characteristic_reviews = characteristic_reviews;
 
+    let savedReview;
+
     try {
-        const savedReview = await review.save();
+        const existedReview = await Review.findOne({product_id: product_id, userReview_id: req.account._id, classification: { $in: ["Quick", "Standard", "Detail"] } });
+        if (existedReview == null) {
+            try {
+                savedReview = await review.save();
+            } catch (e) {
+                return setAndSendResponse(res, responseError.PROBLEM_WITH_EXISTED_REVIEWED);
+            }
+        } else {
+            if (existedReview.classification === "Detail") {
+                // nếu gửi lên là Quick, Standard, Detail thì giữ nguyên classification là Detail
+                if (title) existedReview.title = review.title;
+                if (content) existedReview.content = review.content;
+                existedReview.rating = review.rating;
+                if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
+                savedReview = await existedReview.save();
+            }
+
+            if (existedReview.classification === "Quick") {
+                // nếu gửi lên là Quick, Standard, Detail thì nâng lên classification của chính cái gửi lên
+                existedReview.classification = review.classification;
+                if (title) existedReview.title = review.title;
+                if (content) existedReview.content = review.content;
+                existedReview.rating = review.rating;
+                if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
+                savedReview = await existedReview.save();
+            }
+
+            if (existedReview.classification === "Standard") {
+                if (classification === "Detail" ) existedReview.classification = review.classification; // nâng lên, còn không thì giữ nguyên là Standard
+                if (title) existedReview.title = review.title;
+                if (content) existedReview.content = review.content;
+                existedReview.rating = review.rating;
+                if (characteristic_reviews) existedReview.characteristic_reviews = review.characteristic_reviews;
+                savedReview = await existedReview.save();
+            }
+        }
+
         let reviewResult = await Review.findById(savedReview._id);
 
         let result = {
@@ -719,14 +771,18 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
                 publicId: reviewResult.getVideoThumb()
             }
         }
+
         res.status(201).json({
             code: responseError.OK.body.code,
             message: responseError.OK.body.message,
             data: result
         });
+
     } catch (e) {
+        console.log(e);
         return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
+
 });
 
 

@@ -272,6 +272,13 @@ const responseError = {
             message: "Has been viewed"
         }
     },
+    PROBLEM_WITH_EXISTED_REVIEWED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "707",
+            message: "Problem with existed reviewed"
+        }
+    }
 
 
 }
