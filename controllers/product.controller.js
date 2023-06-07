@@ -7,6 +7,7 @@ const {setAndSendResponse, responseError, callRes} = require('../constants/respo
 const cloudinary = require("../config/cloudinaryConfig");
 const {isValidId} = require("../validations/validateData");
 const mongoose = require("mongoose");
+const Post = require("../models/post.model");
 const MAX_SIZE_IMAGE = 4 * 1024 * 1024;
 
 const productsController = {};
@@ -219,9 +220,16 @@ productsController.get_list_characteristics = expressAsyncHandler(async (req, re
     }
 
     try {
-        const characteristics = await Characteristic.find({product_id: product_id}).select("criteria -_id");
+        const characteristics = await Characteristic.find({product_id: product_id}).select("criteria");
 
-        let result = characteristics.map(c => c.criteria).filter(c => ((c!="Chất liệu") && (c!="Giá cả") && (c!="Hiệu quả") && (c!="An toàn")));
+        const characteristic_reviews  =  characteristics.map((c) => ({
+            characteristic_id:  c._id,
+            criteria: c.criteria
+        }));
+
+        const result = {
+            characteristic_reviews: characteristic_reviews
+        };
 
         res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
@@ -231,6 +239,164 @@ productsController.get_list_characteristics = expressAsyncHandler(async (req, re
 
     } catch (err) {
         console.log(err);
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+productsController.get_loved_products = expressAsyncHandler(async (req, res) => {
+    try {
+        const lovedProducts = await Product.find(
+            {
+                loves: {$gt: 0},
+                lovedAccounts: req.account._id
+            }
+        );
+        return res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: lovedProducts
+        });
+    } catch (err) {
+        console.log(err)
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+
+});
+
+productsController.get_viewed_products = expressAsyncHandler(async (req, res) => {
+    try {
+        const viewedProducts = await Product.find(
+            {
+                loves: {$gt: 0},
+                viewedAccounts: req.account._id
+            }
+        );
+        return res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: viewedProducts
+        });
+    } catch (err) {
+        console.log(err)
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+
+});
+
+productsController.love_product = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try  {
+        let product = await Product.findById(id);
+        if (product == null) {
+            return setAndSendResponse(res, responseError.PRODUCT_IS_NOT_EXISTED);
+        }
+
+        if (
+            product?.lovedAccounts.findIndex((element) => {
+                return element.equals(req.account._id);
+            }) != -1
+        )
+            return setAndSendResponse(res, responseError.HAS_BEEN_LOVED);
+
+        var updatedProduct = await Product.findOneAndUpdate(
+            {_id: id},
+            {$push: {lovedAccounts: {_id: req.account._id}}, $inc: {loves: 1}},
+            { new: true }
+        );
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: {
+                loves: updatedProduct.loves
+            }
+        });
+    } catch (err) {
+
+    }
+});
+
+productsController.unlove_product = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try {
+        let product = await Product.findById(id);
+        if (!product) {
+            return setAndSendResponse(res, responseError.PRODUCT_IS_NOT_EXISTED);
+        }
+
+        const isLoved = product.lovedAccounts.includes(req.account._id);
+        if (!isLoved) {
+            return setAndSendResponse(res, responseError.HAS_NOT_BEEN_LOVED);
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            { $pull: { lovedAccounts: req.account._id }, $inc: { loves: -1 } },
+            { new: true }
+        );
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: {
+                loves: updatedProduct.loves
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+productsController.view_product = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try {
+        let product = await Product.findById(id);
+        if (!product) {
+            return setAndSendResponse(res, responseError.PRODUCT_IS_NOT_EXISTED);
+        }
+
+        const isViewed = product.viewedAccounts.includes(req.account._id);
+        if (isViewed) {
+            return setAndSendResponse(res, responseError.HAS_BEEN_VIEWED);
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            { $push: { viewedAccounts: req.account._id } },
+            { new: true }
+        );
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: updatedProduct
+        });
+    } catch (error) {
+        console.error(error);
         return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
 });

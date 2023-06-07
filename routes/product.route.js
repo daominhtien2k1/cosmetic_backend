@@ -11,5 +11,11 @@ productRouter.get("/get_popular_products", auth, productsController.get_popular_
 productRouter.get("/get_product/:id", auth, productsController.get_product);
 productRouter.get("/get_relate_products", auth, productsController.get_relate_products);
 productRouter.get("/get_list_characteristics", auth, productsController.get_list_characteristics);
+productRouter.get("/get_loved_products", auth, productsController.get_loved_products);
+productRouter.get("/get_viewed_products", auth, productsController.get_viewed_products);
+productRouter.post("/love_product", auth, productsController.love_product);
+productRouter.post("/unlove_product", auth, productsController.unlove_product);
+productRouter.post("/view_product", auth, productsController.view_product);
+
 
 module.exports = productRouter;

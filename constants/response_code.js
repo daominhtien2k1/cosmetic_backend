@@ -243,7 +243,35 @@ const responseError = {
             code: "702",
             message: "Review is not existed"
         }
-    }
+    },
+    PRODUCT_IS_NOT_EXISTED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "703",
+            message: "Product is not existed"
+        }
+    },
+    HAS_BEEN_LOVED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "704",
+            message: "Has been loved"
+        }
+    },
+    HAS_NOT_BEEN_LOVED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "705",
+            message: "Has not been loved"
+        }
+    },
+    HAS_BEEN_VIEWED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "706",
+            message: "Has been viewed"
+        }
+    },
 
 
 }

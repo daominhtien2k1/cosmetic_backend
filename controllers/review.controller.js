@@ -92,15 +92,16 @@ reviewsController.get_review = expressAsyncHandler(async (req, res) => {
         }
 
         if (review.classification == "Detail") {
-            let characteristic_review_results = [];
+            let characteristic_reviews_result = [];
             for (let characteristic_review of review["characteristic_reviews"]) {
                 let characteristic = await Characteristic.findOne({_id: characteristic_review["characteristic_id"]});
-                characteristic_review_results.push({
-                    characteristic: characteristic.criteria,
+                characteristic_reviews_result.push({
+                    characteristic_id: characteristic._id,
+                    criteria: characteristic.criteria,
                     point: characteristic_review["point"]
                 })
             }
-            result.characteristic_review_results = characteristic_review_results;
+            result.characteristic_reviews = characteristic_reviews_result;
         }
 
 
@@ -216,11 +217,12 @@ reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
                     }
 
                 } else if (review.classification == "Detail") {
-                    let characteristic_review_results = [];
+                    let characteristic_reviews_result = [];
                     for (let characteristic_review of review["characteristic_reviews"]) {
                         let characteristic = await Characteristic.findOne({_id: characteristic_review["characteristic_id"]});
-                        characteristic_review_results.push({
-                            characteristic: characteristic.criteria,
+                        characteristic_reviews_result.push({
+                            characteristic_id: characteristic._id,
+                            criteria: characteristic.criteria,
                             point: characteristic_review["point"]
                         })
                     }
@@ -231,7 +233,7 @@ reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
                         rating: review.rating,
                         title: review.title,
                         content: review.content,
-                        characteristic_review_results: characteristic_review_results,
+                        characteristic_reviews: characteristic_reviews_result,
                         createdAt: review.createdAt,
                         updatedAt: review.updatedAt,
                         usefuls: review.usefuls,
@@ -694,7 +696,16 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
             result.content = reviewResult.content;
         }
         if (reviewResult.classification === "Detail") {
-            result.characteristic_reviews = reviewResult.characteristic_reviews;
+            let characteristic_review_results = [];
+            for (let characteristic_review of reviewResult["characteristic_reviews"]) {
+                let characteristic = await Characteristic.findOne({_id: characteristic_review["characteristic_id"]});
+                characteristic_review_results.push({
+                    characteristic_id: characteristic._id,
+                    criteria: characteristic.criteria,
+                    point: characteristic_review["point"]
+                })
+                result.characteristic_reviews = characteristic_review_results;
+            }
         }
         if (reviewResult.images.length !== 0) {
             result.images = reviewResult.images.map((image) => {
@@ -714,8 +725,9 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
             data: result
         });
     } catch (e) {
-        return setAndSendResponse(res, responseError.CAN_NOT_CONNECT_TO_DB);
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
 });
+
 
 module.exports = reviewsController;
