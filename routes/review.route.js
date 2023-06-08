@@ -13,5 +13,6 @@ reviewRouter.get("/product_characteristic_statistics", auth, reviewsController.p
 reviewRouter.post("/add_review", uploadFile, auth, reviewsController.add_review);
 reviewRouter.get("/get_review/:id", auth, reviewsController.get_review);
 reviewRouter.get("/retrieve_review", auth, reviewsController.retrieve_review);
+reviewRouter.post("/edit_instruction_review", uploadFile, auth, reviewsController.edit_instruction_review);
 
 module.exports = reviewRouter;

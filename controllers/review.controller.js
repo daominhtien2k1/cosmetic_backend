@@ -545,7 +545,7 @@ reviewsController.product_characteristic_statistics = expressAsyncHandler(async 
     });
 });
 
-// add and update
+// add and update. Add: Quick - Standard - Detail - Instruction. Update: Quick - Standard - Detail - Instruction
 reviewsController.add_review = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
     let {classification, characteristic_reviews, rating, title, content } = req.body;
@@ -871,5 +871,70 @@ reviewsController.retrieve_review = expressAsyncHandler(async (req, res) => {
 
 });
 
+// Update Instruction
+reviewsController.edit_instruction_review = expressAsyncHandler(async  (req, res) => {
+    const {id, title, content} = req.body;
+
+    if (!id ||!title || !content) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+
+    try {
+        const updateReview = await Review.findOneAndUpdate(
+            {_id: id, userReview_id: req.account._id, classification: "Instruction"},
+            { title: title, content: content},
+            { new: true }
+        );
+
+        if (updateReview == null) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_NOT_EXISTED);
+        }
+
+        let result = {
+            id: updateReview._id,
+            classification: updateReview.classification,
+            rating : updateReview.rating,
+            title : updateReview.title,
+            content : updateReview.content,
+            createdAt: updateReview.createdAt,
+            updatedAt: updateReview.updatedAt,
+            settedUsefulAccounts: updateReview.settedUsefulAccounts,
+            usefuls: updateReview.usefuls,
+            replies: updateReview.replies,
+            author: {
+                id: req.account._id,
+                name: req.account.name,
+                avatar: req.account.getAvatar()
+            },
+            is_setted_useful: updateReview.settedUsefulAccounts.includes(req.account._id),
+            is_blocked: false,
+            can_edit: true,
+            banned: updateReview.banned,
+            can_reply: updateReview.canReply
+        };
+
+        if (updateReview.images.length !== 0) {
+            result.images = updateReview.images.map((image) => {
+                let {url, publicId} = image;
+                return {url: url, publicId: publicId};
+            });
+        }
+        if (updateReview.video && updateReview.video.url != undefined) {
+            result.video = {
+                url: updateReview.video.url,
+                publicId: updateReview.video.publicId
+            }
+        }
+
+        res.status(201).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: result
+        });
+    } catch (error) {
+        console.log(error)
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+
+
+});
 
 module.exports = reviewsController;
