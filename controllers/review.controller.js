@@ -896,7 +896,6 @@ reviewsController.edit_instruction_review = expressAsyncHandler(async  (req, res
             content : updateReview.content,
             createdAt: updateReview.createdAt,
             updatedAt: updateReview.updatedAt,
-            settedUsefulAccounts: updateReview.settedUsefulAccounts,
             usefuls: updateReview.usefuls,
             replies: updateReview.replies,
             author: {

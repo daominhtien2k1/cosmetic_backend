@@ -285,6 +285,7 @@ const reviewSchema = new mongoose.Schema({
         ref: 'reports'
     }]
 });
+reviewSchema.index({ title: "text", content: "text" });
 reviewSchema.set('timestamps', true);
 
 const characteristicSchema = new mongoose.Schema({
