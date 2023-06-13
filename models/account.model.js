@@ -24,13 +24,13 @@ const accountSchema = new mongoose.Schema({
     filename: String,
     url: String,
     publicId: String,
-    require: false,
+    required: false,
   },
   coverImage: {
     filename: String,
     url: String,
     publicId: String,
-    require: false,
+    required: false,
   },
   gender: {
     type: String,
@@ -40,24 +40,24 @@ const accountSchema = new mongoose.Schema({
   },
   online: {
     type: Boolean,
-    require: false,
+    required: false,
   },
   token: {
     type: String,
-    require: false,
+    required: false,
   },
   isBlocked: {
     type: Boolean,
-    require: false,
+    required: false,
     default: false,
   },
   uuid: {
     type: String,
-    require: false,
+    required: false,
   },
   active: {
     type: Boolean,
-    require: false,
+    required: false,
     default: false,
   },
   description: {
@@ -79,7 +79,7 @@ const accountSchema = new mongoose.Schema({
   coordinates: {
     latitude: String,
     longitude: String,
-    require: false,
+    required: false,
   },
   blockedAccounts: [
     {
@@ -129,9 +129,38 @@ const accountSchema = new mongoose.Schema({
       },
     },
   ],
+  skin: {
+    type: {
+      type: String,
+      required: false,
+      default: "Da thường"
+    },
+    obstacle: {
+      isSensitive: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      hasAcne: {
+        type: Boolean,
+        required: false,
+        default: false
+      }
+    }
+  },
+  point: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  level: {
+    type: Number,
+    required: false,
+    default: 1
+  }
 });
 
-accountSchema.index({ phoneNumber: "text" });
+accountSchema.index({ name: "text" });
 accountSchema.set("timestamps", true);
 
 // Do not declare methods using ES6 arrow functions (=>). Arrow functions explicitly prevent binding this, so your method will not have access to the document ...

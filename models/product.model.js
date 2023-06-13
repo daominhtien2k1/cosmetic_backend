@@ -141,7 +141,7 @@ const productSchema = new mongoose.Schema({
     },
     lovedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
     viewedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
-    // số lượng yêu thích sản phẩm (tổng nhiều người) --> Tạo thêm Schema LoveProductUser lưu giữ refer của product và userid
+    // số lượng yêu thích sản phẩm (tổng nhiều người) --> Tạo thêm Schema LoveProductUser lưu giữ refer của product và userid --> Chức năng phụ thôi không cần thêm Schema
     loves: {
         type: Number,
         required: false,

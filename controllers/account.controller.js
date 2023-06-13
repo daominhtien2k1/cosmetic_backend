@@ -582,24 +582,20 @@ accountsController.set_user_info = expressAsyncHandler(async (req, res) => {
 
     // ko gửi thông tin gì lên
     if (!username && !description && !city && !country && !link && !req.files) {
-        console.log("ko gửi thông tin gì lên")
         return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
     }
     // mô tả hơn 150 kí tự
     if (description && description.length > 150) {
-        console.log("mô tả hơn 150 kí tự");
         return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
     }
 
     // tài khoản đã bị khóa
     if (account.isBlocked) {
-        console.log("tài khoản đã bị khóa");
         return setAndSendResponse(res, responseError.NOT_ACCESS);
     }
 
     // tên sai định dạng
     if (username && !isValidName(username)) {
-        console.log("tên sai định dạng");
         return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
     }
     // tên sai định dạng
@@ -652,16 +648,20 @@ accountsController.set_user_info = expressAsyncHandler(async (req, res) => {
     await account.save();
     let data = {
         avatar: account.getAvatar(),
-        cover_image: account.coverImage != undefined ? account.coverImage.url : '',
-        username: account.name,
-        link: account.link,
+        coverImage: account.coverImage != undefined ? account.coverImage.url : '',
+        name: account.name,
+        gender: account.gender,
+        phoneNumber: account.phoneNumber,
+        description: account.description,
         city: account.city,
         country: account.country,
-        created: account.createdAt.getTime().toString(),
-        description: account.description,
+        created: account.createdAt,
+        skin: account.skin,
+        point: account.point,
+        level: account.level
     }
 
-    callRes(res, responseError.OK, data)
+    callRes(res, responseError.OK, data);
 })
 
 accountsController.get_user_info = expressAsyncHandler(async (req, res) => {
@@ -681,44 +681,51 @@ accountsController.get_user_info = expressAsyncHandler(async (req, res) => {
         if (!user) return setAndSendResponse(res, responseError.NO_DATA);
 
         if (user.isBlocked == true) {
-            console.log("tài khoản bị block");
+            // console.log("tài khoản bị block");
             return setAndSendResponse(res, responseError.USER_IS_NOT_VALIDATED);
         }
 
         for (let i of user["blockedAccounts"]){
-            if (i["account"]==account_id)
+            if (i["account"] == account_id)
             return callRes(res, responseError.USER_IS_NOT_VALIDATED, 'Bạn bị người ta blocked rồi nên không thể lấy info của họ');
         }
         
         for (let i of account["blockedAccounts"]){
-            if (i["account"]==user_id)
+            if (i["account"] == user_id)
             return callRes(res, responseError.USER_IS_NOT_VALIDATED, 'Bạn đang blocked user muốn lấy info');
         }
 
-    } 
-    let id = user_id?user_id:account_id
+    }
+
+    let id = user_id ? user_id : account_id
     let user_info = await Account.findOne({ _id: id }).select([
-      "avatar",
-      "coverImage",
-      "name",
-      "gender",
-      "phoneNumber",
-      "description",
-      "city",
-      "country",
-      "createdAt",
+        "avatar",
+        "coverImage",
+        "name",
+        "gender",
+        "phoneNumber",
+        "description",
+        "city",
+        "country",
+        "createdAt",
+        "skin",
+        "point",
+        "level"
     ]);
 
     let res_user_info = {
-      avatar: user_info["avatar"].url,
-      coverImage: user_info["coverImage"].url,
-      name: user_info["name"],
-      gender: user_info["gender"],
-      phoneNumber: user_info["phoneNumber"],
-      description: user_info["description"],
-      city: user_info["city"],
-      country: user_info["country"],
-      createdAt: user_info["createdAt"],
+        avatar: user_info["avatar"].url,
+        coverImage: user_info["coverImage"].url,
+        name: user_info["name"],
+        gender: user_info["gender"],
+        phoneNumber: user_info["phoneNumber"],
+        description: user_info["description"],
+        city: user_info["city"],
+        country: user_info["country"],
+        createdAt: user_info["createdAt"],
+        skin: user_info["skin"],
+        point: user_info["point"],
+        level: user_info["level"]
     };
     
     return res.status(responseError.OK.statusCode).json(res_user_info);
