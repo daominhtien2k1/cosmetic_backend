@@ -48,17 +48,26 @@ const brandSchema = new mongoose.Schema({
         required: false,
         default: 0
     },
+    // không lưu trữ id người theo dõi, chỉ lưu id các thương hiệu theo dõi trong Account
     followers: {
         type: Number,
         required: false,
         default: 0
     },
+    // số lượng đánh giá tất cả sản phẩm
+    reviews: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    // trung bình rate tất cả sản phẩm
     rating: {
         type: Number,
         required: false,
         default: 0
     },
 });
+brandSchema.index({ name: "text", description: "text" });
 
 const categorySchema = new mongoose.Schema({
     slug: {
@@ -161,6 +170,8 @@ const productSchema = new mongoose.Schema({
     relateProductList: [{type: mongoose.Schema.Types.ObjectId, ref: 'products'}],
 
 });
+productSchema.index({ name: "text", description: "text" });
+
 
 const couponSchema = new mongoose.Schema({
     coupon_code: {

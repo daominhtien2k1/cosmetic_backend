@@ -13,23 +13,47 @@ const searchByArray = ["Product", "Review", "Instruction review", "Post", "Accou
 const searchController = {};
 
 searchController.search_sth = expressAsyncHandler(async (req,res) => {
-    let { keyword, index, count, searchBy} = req.query;
+    let { keyword, searchBy} = req.query;
 
     if (!keyword || !searchBy) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
-    if (!index || !count) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
 
     if (searchBy && !searchByArray.includes(searchBy)) {
         return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
     }
 
-    index = parseInt(index);
-    count = parseInt(count);
-    if (!isNumber(index) || !isNumber(count) || index < 0 || count < 1) return setAndSendResponse(res, responseError.PARAMETER_TYPE_IS_INVALID);
-
     const search = Search({account_id: req.account._id, keyword: keyword});
     await search.save();
 
     try {
+        if (searchBy == "Product") {
+            const products = await Product.find({$text: {$search: keyword}});
+            if (products.length < 1) {
+                return setAndSendResponse(res, responseError.NO_DATA);
+            }
+
+            let result = {
+                foundedProducts: products.map(product => {
+                    return {
+                        id: product._id,
+                        slug: product.slug,
+                        name: product.name,
+                        image: product.images[0],
+                        price: product.price,
+                        reviews: product.reviews,
+                        rating: product.rating,
+                        loves: product.loves
+                    };
+                }),
+                founds: products.length
+            }
+
+            res.status(responseError.OK.statusCode).json({
+                code: responseError.OK.body.code,
+                message: responseError.OK.body.message,
+                data: result
+            });
+        }
+
         if (searchBy === "Post") {
             // condition 1: match exactly
             // const posts = await Post.find({$text: {$search: `\"${keyword}\"`}}).populate({path: 'account_id', model: Account}).sort("-createdAt");
@@ -39,7 +63,7 @@ searchController.search_sth = expressAsyncHandler(async (req,res) => {
                 path: 'account_id',
                 model: Account
             }).sort("-createdAt");
-
+            
             if (posts.length < 1) {
                 return setAndSendResponse(res, responseError.NO_DATA);
             }
@@ -220,45 +244,151 @@ searchController.search_sth = expressAsyncHandler(async (req,res) => {
 });
 
 searchController.get_saved_search = expressAsyncHandler(async (req,res) => {
-    let searchList = [];
+    try {
+        // const uniqueKeywords = await Search.distinct('keyword');
+        const limit = 5;
+        let count = 0;
 
-    searchList = await Search.find({
-        account_id: req.account._id
-    })
-    .limit(5)
-    .sort("-createdAt");
+        const searches = await Search.find({account_id: req.account._id}).select("-__v").sort({ createdAt: -1 });
 
-    if(searchList.length < 1)
-    {
-        return setAndSendResponse(res, responseError.NO_DATA);
+        const uniqueSearches = [];
+        const uniqueKeywords = new Set();
+
+        searches.forEach((search) => {
+            if (!uniqueKeywords.has(search.keyword) && count < limit) {
+                uniqueKeywords.add(search.keyword);
+                uniqueSearches.push(search);
+
+                count++;
+            }
+        });
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: uniqueSearches
+        });
+    } catch (error) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
 
-    res.status(responseError.OK.statusCode).json({
-        code: responseError.OK.body.code,
-        message: responseError.OK.body.message,
-        data: searchList
-    });
+
 });
 
 searchController.del_saved_search = expressAsyncHandler(async (req,res) => {
-    const {search_id} = req.body;
+    const {id} = req.query;
 
-    let search = await Search.findOne({
-        account_id: req.account._id,
-        _id: new ObjectId(search_id)
-    })
+    if (!id) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
 
-    if(!search) return setAndSendResponse(res, responseError.NO_DATA);
-    else Search.deleteOne(
-        search,
-        (err, result) => {
-            if(err){
-                return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
-            }else{
-                return setAndSendResponse(res, responseError.OK, search_id)
+    try {
+
+        const search = await Search.findById(id);
+
+        await Search.remove({keyword: search.keyword});
+
+        // trả lại
+        const limit = 5;
+        let count = 0;
+        const searches = await Search.find({account_id: req.account._id}).select("-__v").sort({ createdAt: -1 });
+
+        const uniqueSearches = [];
+        const uniqueKeywords = new Set();
+
+        searches.forEach((search) => {
+            if (!uniqueKeywords.has(search.keyword) && count < limit) {
+                uniqueKeywords.add(search.keyword);
+                uniqueSearches.push(search);
+
+                count++;
             }
-        }
-    )
+        });
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: uniqueSearches
+        });
+    } catch (error) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+
+});
+
+searchController.get_list_top_searches = expressAsyncHandler(async (req,res) => {
+    try {
+        const topSearches = await Search.aggregate([
+            { $group: { _id: '$keyword', count: { $sum: 1 } } },
+            { $sort: { count: -1 } },
+            { $limit: 10 },
+        ]);
+
+        if (topSearches.length < 1) return setAndSendResponse(res, responseError.NO_DATA);
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: topSearches
+        });
+
+    } catch (error) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+searchController.search_suggestions = expressAsyncHandler(async (req,res) => {
+    const search_suggestion_pool = ["Son", "Son dưỡng môi", "Son kem lì", "Son thỏi the", "Son bút chì", "Sữa tẩy", "Sữa rửa mặt", "Sữa dưỡng thể", "Sữa dưỡng da", "Sữa tẩy trang", "Sữa dưỡng ẩm",
+        "Sữa chống nắng", "Sữa dưỡng the", "Sữa tắm hương", "Sữa dưỡng trắng", "Sữa tắm tony", "Sữa tắm tạo bọt", "Sữa rửa mặt dạng gel",
+        "Sữa rửa mặt cho nam", "Sữa sạch da 3 in 1", "Sữa sạch tế bào chết", "Sữa sạch mụn đầu đen", "Sữa sạch sâu và sáng da"];
+
+
+    try {
+        const searchString = req.query.searchString;
+        const regex = new RegExp(searchString, 'i');
+
+        const searchSuggestions = search_suggestion_pool.filter((item) => item.startsWith(searchString));
+
+        const htmlSuggestions = searchSuggestions.map((suggestion) => {
+            // const highlightedText = suggestion.replace(regex, `<b>${searchString}</b>`);
+
+            const spaceIndex = suggestion.indexOf(" ", searchString.length);
+
+            let firstWord;
+            let secondWord;
+            let thirdWord;
+            firstWord = searchString;
+            if (spaceIndex != -1) { // nếu tìm thấy dấu cách thì lấy đến đoạn dấu cách
+                secondWord = suggestion.substring(searchString.length, spaceIndex).trim();
+                thirdWord = suggestion.substring(spaceIndex).trim();
+            } else { // không thấy thì lấy hết phần còn lại
+                secondWord = suggestion.substring(searchString.length).trim();
+                thirdWord = "";
+            }
+
+            let highlightedText;
+            if (secondWord == "" && thirdWord == "") {
+                highlightedText = firstWord;
+            } else if (secondWord != "" && thirdWord != "") { // nửa của từ
+                highlightedText = `${firstWord}<b>${secondWord} ${thirdWord}</b>`;
+            } else if (secondWord != "" && thirdWord == "") {
+                highlightedText = `${firstWord}<b>${secondWord}</b>`;
+            } else if (secondWord == "" && thirdWord != "") { // trọn từ
+                highlightedText = `${firstWord} <b>${thirdWord}</b>`;
+            }
+
+
+
+            return highlightedText;
+        });
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: htmlSuggestions
+        });
+
+    } catch (error) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
 });
 
 module.exports = searchController;

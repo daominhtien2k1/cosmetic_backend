@@ -158,6 +158,13 @@ productsController.get_product = expressAsyncHandler(async (req, res) => {
 
         result.reviews = reviewCount;
         result.rating = averageRating[0] ? parseFloat(averageRating[0].average.toFixed(1)) : 0.0;
+
+        // Không cần new: true vì không cần await trả về kết quả
+        Product.findByIdAndUpdate(id, {
+            reviews: reviewCount,
+            rating: averageRating[0] ? parseFloat(averageRating[0].average.toFixed(1)) : 0.0
+        }).exec();
+
         res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
             message: responseError.OK.body.message,
