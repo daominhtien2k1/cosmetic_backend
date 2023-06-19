@@ -577,11 +577,11 @@ accountsController.get_list_friends = expressAsyncHandler(async (req, res) => {
 
 
 accountsController.set_user_info = expressAsyncHandler(async (req, res) => {
-    const {username, description, city, country, link} = req.body;
+    const {username, gender, description, city, country, skin} = req.body;
     const {account} = req;
 
     // ko gửi thông tin gì lên
-    if (!username && !description && !city && !country && !link && !req.files) {
+    if (!username && !gender && !description && !city && !country && !skin && !req.files) {
         return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
     }
     // mô tả hơn 150 kí tự
@@ -594,23 +594,13 @@ accountsController.set_user_info = expressAsyncHandler(async (req, res) => {
         return setAndSendResponse(res, responseError.NOT_ACCESS);
     }
 
-    // tên sai định dạng
-    if (username && !isValidName(username)) {
-        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
-    }
-    // tên sai định dạng
-    if (city && typeof city !== "string") return callRes(res, responseError.PARAMETER_TYPE_IS_INVALID, 'city');
-    if (country && typeof country !== "string") return callRes(res, responseError.PARAMETER_TYPE_IS_INVALID, 'country');
-    if (link) {
-        if (typeof link !== "string") return callRes(res, responseError.PARAMETER_TYPE_IS_INVALID, 'link');
-        if (!checkLink(link)) return callRes(res, responseError.PARAMETER_VALUE_IS_INVALID, 'link ' + link + ' banned');
-    }
 
     if (username) account.name = username;
+    if (gender) account.gender = gender;
     if (description) account.description = description;
     if (city) account.city = city;
     if (country) account.country = country;
-    if (link) account.link = link;
+    if (skin) account.skin = skin;
 
     // upload avatar
     if (req.files && req.files.avatar) {
@@ -707,7 +697,6 @@ accountsController.get_user_info = expressAsyncHandler(async (req, res) => {
         "description",
         "city",
         "country",
-        "createdAt",
         "skin",
         "point",
         "level"
@@ -722,7 +711,6 @@ accountsController.get_user_info = expressAsyncHandler(async (req, res) => {
         description: user_info["description"],
         city: user_info["city"],
         country: user_info["country"],
-        createdAt: user_info["createdAt"],
         skin: user_info["skin"],
         point: user_info["point"],
         level: user_info["level"]
@@ -810,7 +798,8 @@ accountsController.get_block_account = expressAsyncHandler(async (req, res) => {
     return callRes(res, responseError.OK, { blockedAccounts: data });
   }
 });
- 
+
+// block sẽ xóa trường friends, friendRequestSent, friendRequestReceived của cả 2 bên
 accountsController.block_by_id = expressAsyncHandler(async (req, res) => {
     const {id} = req.body;
     if(!id)  {
@@ -845,6 +834,7 @@ accountsController.block_by_id = expressAsyncHandler(async (req, res) => {
     }
 
 })
+
 accountsController.remove_block_by_id = expressAsyncHandler(async (req, res) => {
     const {id} = req.body;
     if(!id)  {

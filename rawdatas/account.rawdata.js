@@ -27,11 +27,11 @@ const accounts = [
         city: "Gjoçaj",
         country: "Albania",
         blockedAccounts: [
-            {
-                _id: "63ddb35ac5cb8924b0e86ac1",
-                account: "63bbff18fc13ae6493000833",
-                createdAt: "2023-02-04T01:22:34.889Z",
-            },
+            // {
+            //     _id: "63ddb35ac5cb8924b0e86ac1",
+            //     account: "63bbff18fc13ae6493000833",
+            //     createdAt: "2023-02-04T01:22:34.889Z",
+            // },
         ],
         friends: [
             {

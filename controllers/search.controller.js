@@ -6,7 +6,7 @@ const {setAndSendResponse, responseError} = require('../constants/response_code'
 const {isNumber} = require("../validations/validateData");
 const Post = require("../models/post.model");
 const Account = require("../models/account.model");
-const {Review, Product, Characteristic} = require("../models/product.model");
+const {Review, Product, Characteristic, Brand} = require("../models/product.model");
 
 const searchByArray = ["Product", "Review", "Instruction review", "Post", "Account", "Brand"];
 
@@ -25,7 +25,7 @@ searchController.search_sth = expressAsyncHandler(async (req,res) => {
     await search.save();
 
     try {
-        if (searchBy == "Product") {
+        if (searchBy === "Product") {
             const products = await Product.find({$text: {$search: keyword}});
             if (products.length < 1) {
                 return setAndSendResponse(res, responseError.NO_DATA);
@@ -38,13 +38,38 @@ searchController.search_sth = expressAsyncHandler(async (req,res) => {
                         slug: product.slug,
                         name: product.name,
                         image: product.images[0],
-                        price: product.price,
                         reviews: product.reviews,
                         rating: product.rating,
                         loves: product.loves
                     };
                 }),
                 founds: products.length
+            }
+
+            res.status(responseError.OK.statusCode).json({
+                code: responseError.OK.body.code,
+                message: responseError.OK.body.message,
+                data: result
+            });
+        }
+
+        if (searchBy === "Brand") {
+            const brands = await Brand.find({$text: {$search: keyword}});
+            if (brands.length < 1) {
+                return setAndSendResponse(res, responseError.NO_DATA);
+            }
+
+            let result = {
+                foundedBrands: brands.map(brand => {
+                    return {
+                        id: brand._id,
+                        slug: brand.slug,
+                        name: brand.name,
+                        image: brand.image.url,
+                        is_followed: false
+                    }
+                }),
+                founds: brands.length
             }
 
             res.status(responseError.OK.statusCode).json({
@@ -237,6 +262,54 @@ searchController.search_sth = expressAsyncHandler(async (req,res) => {
             });
         }
 
+        if (searchBy === "Account") {
+            const accounts = await Account.find({$text: {$search: keyword}});
+            if (accounts.length < 1) {
+                return setAndSendResponse(res, responseError.NO_DATA);
+            }
+
+            const list_my_friend = req.account.friends;
+            const list_my_sent = req.account.friendRequestSent;
+            const list_my_received = req.account.friendRequestReceived;
+            const list_my_blocked_accounts = req.account.blockedAccounts;
+
+            let result = {
+                foundedAccounts: accounts.map(account => {
+                    const list_blocked_accounts_of_account = account.blockedAccounts;
+
+                    let statusFriend = "Unknown";
+                    // console.log(list_my_friend.find(element => element.friend.toString() === account._id.toString()))
+                    // console.log(list_my_friend.find(element => element.friend == account._id.toString()))
+                    if (list_my_friend.find(element => element.friend.toString() === account._id.toString()) != null) {
+                        statusFriend = "Friend";
+                    } else if (list_my_sent.find(element => element.toUser.toString() === account._id.toString()) != null) {
+                        statusFriend = "Sent friend request";
+                    } else if (list_my_received.find(element => element.fromUser.toString() === account._id.toString()) != null) {
+                        statusFriend = "Received friend request";
+                    } else if ( list_my_blocked_accounts.find(element => element.account.toString() === account._id.toString()) != null
+                        || list_blocked_accounts_of_account.find(element => element.account.toString() === req.account._id.toString())  != null ) {
+                        statusFriend = "Block";
+                    } else {
+                        statusFriend = "Unknown";
+                    }
+                    return {
+                        id: account._id,
+                        avatar: account.avatar.url,
+                        name: account.name,
+                        level: account.level,
+                        statusFriend: statusFriend
+
+                    }
+                }),
+                founds: accounts.length
+            }
+
+            res.status(responseError.OK.statusCode).json({
+                code: responseError.OK.body.code,
+                message: responseError.OK.body.message,
+                data: result
+            });
+        }
     } catch (e) {
         console.log(e);
         return setAndSendResponse(res, responseError.UNKNOWN_ERROR);

@@ -42,25 +42,25 @@ const brandSchema = new mongoose.Schema({
         url: String,
         publicId: String
     },
-    // số lượng sản phẩm trong cửa hàng
+    // số lượng sản phẩm trong cửa hàng -- được cập nhật khi get_detail brand
     products: {
         type: Number,
         required: false,
         default: 0
     },
-    // không lưu trữ id người theo dõi, chỉ lưu id các thương hiệu theo dõi trong Account
+    // thêm trường id người theo dõi vào đây như product
     followers: {
         type: Number,
         required: false,
         default: 0
     },
-    // số lượng đánh giá tất cả sản phẩm
+    // số lượng đánh giá tất cả sản phẩm -- được cập nhật khi get_detail brand
     reviews: {
         type: Number,
         required: false,
         default: 0
     },
-    // trung bình rate tất cả sản phẩm
+    // trung bình rate tất cả sản phẩm -- được cập nhật khi get_detail brand
     rating: {
         type: Number,
         required: false,
