@@ -11,7 +11,8 @@ const brands = [
             publicId: ""
         },
         products: 83,
-        followers: 200,
+        followedAccounts: [],
+        followers: 0,
         rating: 4.2
     },
     {
@@ -27,7 +28,8 @@ const brands = [
             publicId: ""
         },
         products: 26,
-        followers: 50,
+        followedAccounts: [],
+        followers: 0,
         rating: 4.6
     },
     {
@@ -42,7 +44,8 @@ const brands = [
             publicId: ""
         },
         products: 72,
-        followers: 66,
+        followedAccounts: [],
+        followers: 0,
         rating: 4.2
     },
     {
@@ -57,7 +60,8 @@ const brands = [
             publicId: ""
         },
         products: 82,
-        followers: 282,
+        followedAccounts: ["63bbff18fc13ae649300082a"],
+        followers: 1,
         rating: 4.2
     },
     {
@@ -72,7 +76,8 @@ const brands = [
             publicId: ""
         },
         products: 42,
-        followers: 89,
+        followedAccounts: [],
+        followers: 0,
         rating: 4.7
     },
 

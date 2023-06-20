@@ -110,9 +110,6 @@ productsController.get_product = expressAsyncHandler(async (req, res) => {
             return setAndSendResponse(res, responseError.POST_IS_NOT_EXISTED);
         }
 
-        let lovedAccountIDArray = product.lovedAccounts.map(x => x._id);
-        let viewedAccountIDArray = product.viewedAccounts.map(x => x._id);
-
         let result = {
             id: product._id,
             name: product.name,
@@ -124,8 +121,8 @@ productsController.get_product = expressAsyncHandler(async (req, res) => {
             lowPrice: product.lowPrice,
             highPrice: product.highPrice,
             loves: product.loves,
-            isLoved: lovedAccountIDArray.includes(req.account._id),
-            isViewed: lovedAccountIDArray.includes(req.account._id),
+            isLoved: product.lovedAccounts.includes(req.account._id),
+            isViewed: product.viewedAccounts.includes(req.account._id),
             brand: {
                 id: product.brand_id._id,
                 name:  product.brand_id.name,
@@ -258,10 +255,24 @@ productsController.get_loved_products = expressAsyncHandler(async (req, res) => 
                 lovedAccounts: req.account._id
             }
         );
+
+        const result = lovedProducts.map(lp => {
+            return {
+                id: lp._id,
+                slug: lp.slug,
+                name: lp.name,
+                image: lp.images[0],
+                reviews: lp.reviews,
+                rating: lp.rating,
+                loves: lp.loves,
+                isLoved: lp.lovedAccounts.includes(req.account._id)
+            };
+        });
+
         return res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
             message: responseError.OK.body.message,
-            data: lovedProducts
+            data: result
         });
     } catch (err) {
         console.log(err)
@@ -274,14 +285,27 @@ productsController.get_viewed_products = expressAsyncHandler(async (req, res) =>
     try {
         const viewedProducts = await Product.find(
             {
-                loves: {$gt: 0},
                 viewedAccounts: req.account._id
             }
         );
+
+        const result = viewedProducts.map(vp => {
+            return {
+                id: vp._id,
+                slug: vp.slug,
+                name: vp.name,
+                image: vp.images[0],
+                reviews: vp.reviews,
+                rating: vp.rating,
+                loves: vp.loves,
+                isViewed: vp.viewedAccounts.includes(req.account._id)
+            };
+        });
+
         return res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
             message: responseError.OK.body.message,
-            data: viewedProducts
+            data: result
         });
     } catch (err) {
         console.log(err)

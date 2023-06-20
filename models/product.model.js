@@ -48,7 +48,7 @@ const brandSchema = new mongoose.Schema({
         required: false,
         default: 0
     },
-    // thêm trường id người theo dõi vào đây như product
+    followedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
     followers: {
         type: Number,
         required: false,

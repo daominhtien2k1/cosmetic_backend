@@ -109,7 +109,7 @@ brandsController.get_brand = expressAsyncHandler(async (req,res) => {
             reviews: newBrand.reviews,
             rating: newBrand.rating,
             productList: productListResult,
-            is_followed: false
+            is_followed: newBrand.followedAccounts.includes(req.account._id)
         }
 
         res.status(responseError.OK.statusCode).json({
@@ -118,6 +118,80 @@ brandsController.get_brand = expressAsyncHandler(async (req,res) => {
             data: result
         });
     } catch (err) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+brandsController.follow_brand = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try  {
+        let brand = await Brand.findById(id);
+
+        if (
+            brand?.followedAccounts.findIndex((element) => {
+                return element.equals(req.account._id);
+            }) != -1
+        )
+            return setAndSendResponse(res, responseError.HAS_BEEN_FOLLOWED);
+
+        var updatedBrand = await Brand.findOneAndUpdate(
+            {_id: id},
+            {$push: {followedAccounts: {_id: req.account._id}}, $inc: {followers: 1}},
+            { new: true }
+        );
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: {
+                followers: updatedBrand.followers
+            }
+        });
+    } catch (err) {
+
+    }
+});
+
+brandsController.unfollow_brand = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try {
+        let brand = await Brand.findById(id);
+
+        const isFollowed = brand.followedAccounts.includes(req.account._id);
+        if (!isFollowed) {
+            return setAndSendResponse(res, responseError.HAS_NOT_BEEN_FOLLOWED);
+        }
+
+        const updatedBrand = await Brand.findByIdAndUpdate(
+            id,
+            { $pull: { followedAccounts: req.account._id }, $inc: { followers: -1 } },
+            { new: true }
+        );
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: {
+                followers: updatedBrand.followers
+            }
+        });
+    } catch (error) {
+        console.error(error);
         return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
     }
 });

@@ -278,7 +278,21 @@ const responseError = {
             code: "707",
             message: "Problem with existed reviewed"
         }
-    }
+    },
+    HAS_BEEN_FOLLOWED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "708",
+            message: "Has been followed"
+        }
+    },
+    HAS_NOT_BEEN_FOLLOWED: {
+        statusCode: 400, // fix and restore // sử dụng 204 sẽ không trả về bất kì kết quả nào
+        body: {
+            code: "709",
+            message: "Has not been followed"
+        }
+    },
 
 
 }
