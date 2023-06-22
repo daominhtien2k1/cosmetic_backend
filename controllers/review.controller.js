@@ -796,7 +796,7 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
 
 });
 
-// Quick, Standard, Detail - phục vụ để update lại review: bao gồm rating, title, content, characteristic_reviews. Instruction không cần retrieve
+// Quick, Standard, Detail - phục vụ để update lại review: bao gồm rating, title, content, characteristic_reviews. Instruction không cần retrieve - Bởi vì ấn vào FAB không có dữ liệu được chuyển tiếp
 reviewsController.retrieve_review = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
 

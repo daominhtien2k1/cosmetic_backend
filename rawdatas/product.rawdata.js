@@ -144,17 +144,22 @@ const products = [
         images: [
             {
                 filename: "",
-                url: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360388/datn/images/vitamin_A_main_k9o8bo.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360389/datn/images/vitamin_A_mwt4wd.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360390/datn/images/vitamin_A_1_ldv6bn.jpg",
+                publicId: "",
+            },
+            {
+                filename: "",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360388/datn/images/vitamin_A_2_lnjmex.jpg",
                 publicId: "",
             },
         ],
@@ -195,19 +200,24 @@ const products = [
         images: [
             {
                 filename: "",
-                url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360406/datn/images/vitamin_B_main_uawjqa.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360407/datn/images/vitamin_B_kctyb8.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360408/datn/images/vitamin_B_1_wdoyvp.jpg",
                 publicId: "",
-            }
+            },
+            {
+                filename: "",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360406/datn/images/vitamin_B_2_jj29pe.jpg",
+                publicId: "",
+            },
         ],
         lowPrice: 17000,
         highPrice: 21000,
@@ -246,17 +256,22 @@ const products = [
         images: [
             {
                 filename: "",
-                url: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360415/datn/images/Vitamin_C_main_bfgewt.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360415/datn/images/vitamin_C_mkfivn.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360417/datn/images/vitamin_C_1_ce9sva.jpg",
+                publicId: "",
+            },
+            {
+                filename: "",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360415/datn/images/vitamin_C_2_o4c7pj.jpg",
                 publicId: "",
             },
         ],
@@ -297,17 +312,22 @@ const products = [
         images: [
             {
                 filename: "",
-                url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360462/datn/images/Vitamin_E_main_ue1iqo.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360462/datn/images/vitamin_E_mr3o4q.jpg",
                 publicId: "",
             },
             {
                 filename: "",
-                url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360463/datn/images/vitamin_E_1_bekfh8.jpg",
+                publicId: "",
+            },
+            {
+                filename: "",
+                url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1687360462/datn/images/vitamin_E_2_dlxtfv.jpg",
                 publicId: "",
             },
         ],
