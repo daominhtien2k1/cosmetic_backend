@@ -39,6 +39,9 @@ const accounts = [
                 friend: "63bbff18fc13ae6493000831",
                 createdAt: "2023-02-04T01:22:33.851Z",
             },
+            {
+                friend: "63bbff18fc13ae6493000834"
+            }
         ],
         friendRequestReceived: [
             {
@@ -571,6 +574,43 @@ const accounts = [
         __v: 0,
         createdAt: "2023-02-04T01:22:33.653Z",
         updatedAt: "2023-02-04T01:22:36.873Z",
+    },
+    // brand
+    {
+        avatar: {
+            filename: null,
+            url: "https://res.cloudinary.com/dnway4ykc/image/upload/v1684245914/datn/images/bnbg_zfbaij.png",
+            publicId: null,
+        },
+        coverImage: {
+            filename: null,
+            url: "https://media.hasaki.vn/brand/1548670734bnbg.jpg",
+            publicId: null,
+        },
+        name: "BNBG",
+        gender: "Male",
+        isBlocked: false,
+        _id: "63bbff18fc13ae6493000834",
+        password: "111222",
+        phoneNumber: "0868327784",
+        online: true,
+        token: "01GPB5RXY61A0JPZ49ZATB06K7",
+        uuid: "fc86ebc1-b012-577c-bc08-2e2cf3e4214a",
+        active: true,
+        description: "Mặt nạ Banobagi (BNBG) là một trong những thương hiệu mỹ phẩm nổi tiếng đến từ Hàn Quốc, nhưng các sản phẩm của hãng được tin dùng ở nhiều quốc gia như Mỹ, Thái Lan, Canada,… và trong đó không thể không nói tới thị trường Việt Nam. Thể hiện rõ nhất vào năm 2017 số lượng mặt nạ BNBG bán ra lên tới 30 triệu sản phẩm.",
+        link: "https://skinstore.vn/brand/bnbg",
+        city: "Seoul",
+        country: "Hàn Quốc",
+        blockedAccounts: [],
+        friends: [
+            {
+                friend: "63bbff18fc13ae649300082a",
+            }
+        ],
+        friendRequestReceived: [],
+        friendRequestSent: [],
+        isBrand: true,
+        brandId: "64639687ffa8cd1a203b4092"
     },
 ];
 

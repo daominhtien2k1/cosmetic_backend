@@ -431,6 +431,25 @@ const posts = [
         createdAt: "2023-02-04T03:38:38.608Z",
         updatedAt: "2023-02-04T03:38:38.608Z",
     },
+    // post of official brand
+    {
+        likedAccounts: [],
+        commentList: [],
+        likes: 0,
+        comments: 0,
+        canComment: false,
+        banned: false,
+        reports_post: [],
+        _id: "63ddd33e5fa9cf5634bb2826",
+        account_id: "63bbff18fc13ae6493000834",
+        described:
+            "Bài chia sẻ đến từ nhãn hàng nhằm lan tỏa những sản phẩm tốt đến cho mọi người dân Việt Nam",
+        status: "trống vắng",
+        classification: "General",
+        __v: 0,
+        createdAt: "2023-02-04T03:38:38.608Z",
+        updatedAt: "2023-02-04T03:38:38.608Z",
+    }
 ];
 
 const comments = [

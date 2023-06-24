@@ -70,7 +70,7 @@ postsController.get_post = expressAsyncHandler(async (req, res) => {
         if (isBlocked) return callRes(res, responseError.NOT_ACCESS, 'Người viết đã chặn bạn, do đó không thể lấy thông tin bài viết');
 
         let likedAccountIDArray = post.likedAccounts.map(x => x._id);
-
+        // console.log(likedAccountIDArray); // "mongoose": "^6.11.1", sẽ trả về false, "mongoose": "^5.12.2", sẽ trả về true
         let result = {
             id: post._id,
             described: post.described,
@@ -84,7 +84,7 @@ postsController.get_post = expressAsyncHandler(async (req, res) => {
                 name: author.name,
                 avatar: author.getAvatar()
             },
-            is_liked: likedAccountIDArray.includes(req.account._id),
+            is_liked: likedAccountIDArray.includes(req.account._id), // "mongoose": "^6.11.1", sẽ trả về false
             status: post.status,
             is_blocked: isBlocked,
             can_edit: req.account._id.equals(author._id) ? (post.banned ? false : true) : false,

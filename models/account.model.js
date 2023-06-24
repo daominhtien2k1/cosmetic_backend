@@ -157,6 +157,16 @@ const accountSchema = new mongoose.Schema({
     type: Number,
     required: false,
     default: 1
+  },
+  isBrand: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  brandId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "brands",
+    required: false,
   }
 });
 

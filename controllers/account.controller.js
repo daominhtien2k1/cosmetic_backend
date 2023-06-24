@@ -699,7 +699,9 @@ accountsController.get_user_info = expressAsyncHandler(async (req, res) => {
         "country",
         "skin",
         "point",
-        "level"
+        "level",
+        "isBrand",
+        "brandId"
     ]);
 
     let res_user_info = {
@@ -713,7 +715,9 @@ accountsController.get_user_info = expressAsyncHandler(async (req, res) => {
         country: user_info["country"],
         skin: user_info["skin"],
         point: user_info["point"],
-        level: user_info["level"]
+        level: user_info["level"],
+        isBrand: user_info["isBrand"],
+        brandId: user_info["brandId"]
     };
     
     return res.status(responseError.OK.statusCode).json(res_user_info);
@@ -921,6 +925,42 @@ accountsController.logout = expressAsyncHandler(async (req, res) => {
     const {account} = req;
     await Account.findOneAndUpdate({_id: account._id}, {token: undefined});
     return setAndSendResponse(res, responseError.OK);
+});
+
+accountsController.increase_point_level = expressAsyncHandler(async (req, res) => {
+    const levelThresholds = {
+        1: 0,
+        2: 500,
+        3: 1000,
+        4: 1500,
+        5: 2000,
+        6: 2500,
+        7: 3000,
+        8: 3500,
+        9: 4000,
+        10: 4500
+    };
+
+    function checkLevelThresholds() {
+        for (let level in levelThresholds) {
+            if (account.point >= levelThresholds[level] && account.level < level) {
+                account.level = parseInt(level);
+            }
+        }
+    }
+
+    const point = parseInt(req.body.point);
+    const {account} = req;
+
+    if (!point) {
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    } else {
+        account.point += point;
+        checkLevelThresholds();
+        await account.save();
+        return callRes(res, responseError.OK, "Tăng point thành công");
+    }
+
 });
 
 module.exports = accountsController;
