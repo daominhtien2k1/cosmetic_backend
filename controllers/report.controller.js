@@ -34,13 +34,24 @@ reportsController.get_list_reported_posts = expressAsyncHandler(async (req, res)
 });
 
 reportsController.get_list_reported_reviews = expressAsyncHandler(async (req, res) => {
-    const reports = await Report.find({review_id: { $ne: null } }).populate({path: 'review_id', model: Review}).sort("-createdAt");
+    const reports = await Report.find({review_id: { $ne: null } })
+        .populate({
+            path: 'review_id',
+            model: Review,
+            populate: {
+                path: 'product_id',
+                model: 'Product',
+            },
+        })
+        .sort("-createdAt");
     const resultsMustFilter = reports.map((report) => {
         return {
             status: report.status,
             subject: report.subject,
             details: report.subject,
             review_id: report.review_id._id,
+            productImage: report.review_id.product_id.images[0].url,
+            productName: report.review_id.product_id.name,
             account_id: report.review_id.userReview_id,
             reviewTitle: report.review_id.title,
             reviewRating: report.review_id.rating,

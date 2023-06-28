@@ -196,4 +196,31 @@ brandsController.unfollow_brand = expressAsyncHandler(async (req, res) => {
     }
 });
 
+brandsController.get_followed_brands = expressAsyncHandler(async (req, res) => {
+    const brands = await Brand.find();
+    if (brands.length < 1) {
+        return setAndSendResponse(res, responseError.NO_DATA);
+    }
+
+    let resultMustFilter = brands.map(brand => {
+        return {
+            id: brand._id,
+            slug: brand.slug,
+            name: brand.name,
+            image: brand.image.url,
+            is_followed: brand.followedAccounts.includes(req.account._id)
+        }
+    });
+
+    let result = resultMustFilter.filter((b) => b.is_followed == true);
+
+    res.status(responseError.OK.statusCode).json({
+        code: responseError.OK.body.code,
+        message: responseError.OK.body.message,
+        data: result
+    });
+
+});
+
+
 module.exports = brandsController;

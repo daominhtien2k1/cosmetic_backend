@@ -915,5 +915,41 @@ postsController.unlike_post = expressAsyncHandler(async (req, res) => {
     }
 });
 
+// merge 2 cái report và auto-bot + admin banned
+postsController.get_deleted_banned_post = expressAsyncHandler(async (req, res) => {
+    try {
+        const posts = await Post.find({account_id: req.account._id, banned: true}).sort("-createdAt");
+
+        // tự động khóa không cần người khác report
+        const postsResult = posts.map((p) => {
+            return {
+                subject: "Bị khóa do Bot/Admin",
+                details: "Bị khóa do Bot/Admin",
+                post_id: p._id,
+                account_id: p.account_id,
+                postDescribed: p.described
+            }
+        });
+
+        // nếu là khóa do report thì set lại subject và details
+        for (let p of postsResult) {
+            let report = await Report.findOne({post_id: p.post_id});
+            if (report != null) {
+                p.subject = report.subject,
+                p.details = report.details
+            }
+        }
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: postsResult
+        })
+
+    } catch (e) {
+
+    }
+})
+
 module.exports = postsController;
 

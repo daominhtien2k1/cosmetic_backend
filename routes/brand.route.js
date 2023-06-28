@@ -7,5 +7,6 @@ const auth = require("../middlewares/auth.middleware");
 brandRouter.get("/get_brand/:id", auth, brandController.get_brand);
 brandRouter.post("/follow_brand", auth, brandController.follow_brand);
 brandRouter.post("/unfollow_brand", auth, brandController.unfollow_brand);
+brandRouter.get("/get_followed_brands", auth, brandController.get_followed_brands);
 
 module.exports = brandRouter;

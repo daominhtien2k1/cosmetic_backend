@@ -18,4 +18,6 @@ postRouter.post('/report_post', auth, postsController.report_post);
 postRouter.post("/like_post", auth, postsController.like_post);
 postRouter.post("/unlike_post", auth, postsController.unlike_post);
 
+postRouter.get("/get_deleted_banned_post", auth, postsController.get_deleted_banned_post);
+
 module.exports = postRouter;
