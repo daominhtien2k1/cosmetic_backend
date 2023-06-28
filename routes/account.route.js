@@ -23,5 +23,6 @@ accountRouter.post("/logout", auth, accountsController.logout);
 accountRouter.post("/block_by_id",auth, accountsController.block_by_id);
 accountRouter.post("/remove_block_by_id",auth, accountsController.remove_block_by_id);
 accountRouter.post("/increase_point_level", auth, accountsController.increase_point_level);
+accountRouter.get("/statistic_overall", auth, accountsController.statistic_overall);
 
 module.exports = accountRouter;

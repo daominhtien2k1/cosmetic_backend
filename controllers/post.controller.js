@@ -790,7 +790,8 @@ postsController.report_post = expressAsyncHandler(async (req, res) => {
         reporter_id: account._id,
         post_id: id,
         subject: subject,
-        details: details
+        details: details,
+        status: "Pending"
     }).save();
 
     setAndSendResponse(res, responseError.OK);

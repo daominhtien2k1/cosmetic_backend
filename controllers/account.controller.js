@@ -10,6 +10,10 @@ const cloudinary = require('../config/cloudinaryConfig')
 const {responseError, setAndSendResponse, callRes} = require('../constants/response_code');
 const {isValidPassword, isPhoneNumber, isValidId, isValidName, checkLink} = require('../validations/validateData');
 const {JWT_SECRET} = require("../constants/constants");
+const Post = require("../models/post.model");
+const Comment = require("../models/comment.model");
+const {Review} = require("../models/product.model");
+const Reply = require("../models/reply.model");
 
 const accountsController = {};
 
@@ -960,6 +964,27 @@ accountsController.increase_point_level = expressAsyncHandler(async (req, res) =
         await account.save();
         return callRes(res, responseError.OK, "Tăng point thành công");
     }
+
+});
+
+accountsController.statistic_overall = expressAsyncHandler(async (req, res) => {
+    const postCount = await Post.countDocuments({account_id: req.account._id});
+    const reviewCount = await Review.countDocuments({userReview_id: req.account._id});
+
+    // add all
+    const commentCount = await Comment.countDocuments({userComment_id: req.account._id});
+    const replyCount = await Reply.countDocuments({userReview_id: req.account._id});
+
+    const result = {
+        postCount: postCount,
+        reviewCount: reviewCount,
+        otherActivityCount: commentCount + replyCount
+    }
+    res.status(responseError.OK.statusCode).json({
+        code: responseError.OK.body.code,
+        message: responseError.OK.body.message,
+        data: result
+    });
 
 });
 

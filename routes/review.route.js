@@ -14,5 +14,7 @@ reviewRouter.post("/add_review", uploadFile, auth, reviewsController.add_review)
 reviewRouter.get("/get_review/:id", auth, reviewsController.get_review);
 reviewRouter.get("/retrieve_review", auth, reviewsController.retrieve_review);
 reviewRouter.post("/edit_instruction_review", uploadFile, auth, reviewsController.edit_instruction_review);
+reviewRouter.post("/report_review", auth, reviewsController.report_review);
+
 
 module.exports = reviewRouter;

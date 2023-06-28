@@ -13,6 +13,17 @@ const reportSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // Hoàn tác ngay sẽ xóa luôn document, còn Cancel trong quản lý thì chỉ đổi trạng thái
+    status: {
+        type: String,
+        enum: ["Pending", "Resolved", "Denied", "Cancelled"],
+        required: false,
+        default: "Pending"
+    },
+    response: {
+        type: String,
+        required: false
+    }
 });
 reportSchema.set('timestamps', true);
 
