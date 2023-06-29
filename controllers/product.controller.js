@@ -69,7 +69,7 @@ productsController.add_carousel = expressAsyncHandler(async (req, res) => {
 
 productsController.get_popular_products = expressAsyncHandler(async (req, res) => {
     try {
-        const limit = req.query.limit || 4; // Giới hạn số lượng sản phẩm (mặc định là 2)
+        const limit = req.query.limit || 5; // Giới hạn số lượng sản phẩm (mặc định là 2)
         const popularProducts = await Product.find({})
             .sort({ loves: -1 }) // Sắp xếp theo số lượng yêu thích giảm dần
             .limit(parseInt(limit)); // Giới hạn số lượng sản phẩm trả về

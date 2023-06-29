@@ -78,10 +78,10 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    parentCategory: {
-        type: String,
-        required: true
-    },
+    // parentCategory: {
+    //     type: String,
+    //     required: true
+    // },
     description: {
         type: String,
         required: true
@@ -124,7 +124,7 @@ const productSchema = new mongoose.Schema({
     },
     highPrice: {
         type: Number,
-        required: false,
+        required: true,
         default: 0
     },
     // sản phẩm còn bán hay không thôi, ít tác dụng
@@ -136,8 +136,9 @@ const productSchema = new mongoose.Schema({
     // availableInStoreList: [{type: mongoose.Schema.Types.ObjectId, ref: 'stores'}],
     type: {
         type: String,
-        enum: ['Featured', 'Upcoming', 'New', 'Normal'],
-        required: false
+        enum: ['Đặc sắc', 'Sắp ra mắt', 'Mới ra', 'Bình thường'],
+        required: false,
+        default: 'Bình thường'
     },
     lovedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
     viewedAccounts: [{type: mongoose.Schema.Types.ObjectId, ref: 'accounts'}],
@@ -163,7 +164,7 @@ const productSchema = new mongoose.Schema({
     recentReviewList: [{type: mongoose.Schema.Types.ObjectId, ref: 'reviews'}],
     // top 10 review có đánh giá cao nhất
     highestStarReviewList: [{type: mongoose.Schema.Types.ObjectId, ref: 'reviews'}],
-    gender: [ {type: String, enum: ['Nam', 'Nữ', 'Other']} ],
+    gender: [ {type: String, enum: ['Nam', 'Nữ', 'Khác']} ],
     skin: [{type: String}],
     // các tag khác dành cho lọc
     tag: [{type: String}],

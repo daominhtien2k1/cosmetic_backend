@@ -89,35 +89,35 @@ const categories = [
         _id: "6463983574f12a46a0ce5228",
         slug: "mask",
         name: "Mặt nạ",
-        parentCategory: "Chăm sóc da",
+        // parentCategory: "Chăm sóc da",
         description: "Mặt nạ"
     },
     {
         _id: "6463983574f12a46a0ce5229",
         slug: "face_cream",
         name: "Kem dưỡng da mặt",
-        parentCategory: "Chăm sóc da",
+        // parentCategory: "Chăm sóc da",
         description: "Kem dưỡng da mặt"
     },
     {
         _id: "6463983574f12a46a0ce522a",
         slug: "toner",
         name: "Toner",
-        parentCategory: "Chăm sóc da",
+        // parentCategory: "Chăm sóc da",
         description: "Nước cân bằng da"
     },
     {
         _id: "6463983574f12a46a0ce522b",
         slug: "skin_whitening_care",
         name: "Chăm sóc trắng da",
-        parentCategory: "Mỹ phẩm chức năng",
+        // parentCategory: "Mỹ phẩm chức năng",
         description: "Chăm sóc trắng da"
     },
     {
         _id: "6463983574f12a46a0ce522c",
         slug: "shampoo",
         name: "Dầu gội",
-        parentCategory: "Chăm sóc tóc",
+        // parentCategory: "Chăm sóc tóc",
         description: "Dầu gội"
     },
 ];
@@ -166,7 +166,7 @@ const products = [
         lowPrice: 18000,
         highPrice: 20000,
         available: true,
-        type: "Normal",
+        type: "Bình thường",
         lovedAccounts: ["63bbff18fc13ae649300082a"],
         viewedAccounts: ["63bbff18fc13ae649300082a"],
         loves: 1,
@@ -222,7 +222,7 @@ const products = [
         lowPrice: 17000,
         highPrice: 21000,
         available: true,
-        type: "Normal",
+        type: "Bình thường",
         lovedAccounts: ["63bbff18fc13ae649300082a"],
         viewedAccounts: ["63bbff18fc13ae649300082a"],
         loves: 1,
@@ -278,7 +278,7 @@ const products = [
         lowPrice: 19000,
         highPrice: 22000,
         available: true,
-        type: "Normal",
+        type: "Bình thường",
         lovedAccounts: ["63bbff18fc13ae649300082a"],
         viewedAccounts: ["63bbff18fc13ae649300082a"],
         loves: 1,
@@ -334,7 +334,7 @@ const products = [
         lowPrice: 20000,
         highPrice: 22000,
         available: true,
-        type: "Normal",
+        type: "Bình thường",
         lovedAccounts: ["63bbff18fc13ae649300082a"],
         viewedAccounts: ["63bbff18fc13ae649300082a"],
         loves: 1,
