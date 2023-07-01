@@ -218,9 +218,9 @@ const couponSchema = new mongoose.Schema({
     },
     couponStatus: {
         type: String,
-        enum: ['Active', 'Expired', 'Disabled']
+        enum: ['Active', 'Hết hạn', 'Disabled']
     },
-    // mặc định false có thể là toàn cửa hàng
+    // mặc định null có thể là toàn cửa hàng
     brand_id: {type: mongoose.Schema.Types.ObjectId, ref: 'brands', required: false}
 });
 
@@ -343,5 +343,6 @@ module.exports = {
     Category,
     Product,
     Review,
-    Characteristic
+    Characteristic,
+    Coupon
 }

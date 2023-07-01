@@ -1,9 +1,9 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const GENDER_MALE = 'Male';
-const GENDER_FEMALE = 'Female';
-const GENDER_SECRET = 'Secret';
+const GENDER_MALE = 'Nam';
+const GENDER_FEMALE = 'Nữ';
+const GENDER_SECRET = 'Bí mật';
 
 const PRIVATE_CHAT = 'PRIVATE_CHAT';
 const GROUP_CHAT = 'GROUP_CHAT';

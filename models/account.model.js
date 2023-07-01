@@ -3,6 +3,7 @@ const { GENDER_SECRET } = require("../constants/constants");
 const { GENDER_FEMALE } = require("../constants/constants");
 const { GENDER_MALE } = require("../constants/constants");
 
+// thống nhất, tất cả các trường chuyển sang tiếng việt
 const accountSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -34,7 +35,7 @@ const accountSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: [GENDER_MALE, GENDER_FEMALE, GENDER_SECRET],
+    enum: [GENDER_MALE, GENDER_FEMALE, GENDER_SECRET],  // chuyển sang tiếng việt, nhưng biến lưu giữ là tiếng anh
     required: false,
     default: GENDER_SECRET,
   },

@@ -4,6 +4,8 @@ const expressAsyncHandler = require("express-async-handler");
 
 const {responseError, setAndSendResponse, callRes} = require('../constants/response_code');
 const {Category, Brand, Product, Characteristic} = require("../models/product.model");
+const Account = require("../models/account.model");
+const Event = require("../models/event.model");
 
 const adminController = {}
 
@@ -49,18 +51,26 @@ adminController.fetch_products = expressAsyncHandler(async (req, res) => {
 adminController.update_product = expressAsyncHandler(async  (req, res) => {
     try {
         const productId = req.params.id;
+
+        if(!productId) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
         const { name, origin, description, category, brand, images, lowPrice, highPrice, available, type, gender, skin, characteristics } = req.body;
 
         const category_id = await Category.findOne({name: category})._id;
         const brand_id = await Brand.findOne({name: brand})._id;
 
         // Chuyển các trường từ string thành mảng
-        let imagesArray, genderArray, skinArray, characteristicsArray;
+        let imagesArray, availableValue, genderArray, skinArray, characteristicsArray;
 
         if (images) {
             imagesArray = images.split('&&').map(url => {
                 return {filename: '', url: url, publicId: ''};
             });
+        }
+        if (available) {
+            availableValue = (available == "Khả dụng" ? true : false);
         }
         if (gender) {
             genderArray = gender.split('&&').map(item => item.trim());
@@ -104,7 +114,7 @@ adminController.update_product = expressAsyncHandler(async  (req, res) => {
             updateData.highPrice = highPrice;
         }
         if (available) {
-            updateData.available = available;
+            updateData.available = availableValue;
         }
         if (type) {
             updateData.type = type;
@@ -116,6 +126,7 @@ adminController.update_product = expressAsyncHandler(async  (req, res) => {
             updateData.skin = skinArray;
         }
         // console.log(updateData);
+        // dù nhận từ là String nhưng khi cập nhật dữ liệu tự động vẫn có thể là giá trị boolean (tự nhận dạng Boolean string)
         const updatedProduct = await Product.findByIdAndUpdate(productId, { $set: updateData }, { new: true });
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
@@ -211,6 +222,446 @@ adminController.create_product = expressAsyncHandler(async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+adminController.fetch_accounts = expressAsyncHandler(async (req, res) => {
+    try {
+        const accounts = await Account.find({}, '_id name phoneNumber avatar gender isBlocked description city country skin point level isBrand brandId')
+            .lean()
+            .exec();
+
+        // Chuyển đổi giá trị isBlocked thành chuỗi "Bị khóa" hoặc "Hoạt động"
+        const formattedAccounts = accounts.map(({ skin, ...restProp }) => ({
+            ...restProp,
+            avatar: restProp.avatar.url,
+            isBlocked: restProp.isBlocked ? 'Bị khóa' : 'Hoạt động',
+            skinType: skin.type,
+            skinIsSensitive: skin.obstacle.isSensitive ? 'Nhạy cảm': 'Không nhạy cảm',
+            hasAcne: skin.obstacle.hasAcne ? 'Có mụn' : 'Không có mụn',
+            isBrand: restProp.isBrand ? 'Nhãn hàng' : 'Tài khoản thường',
+            brandId: restProp.brandId ? restProp.brandId : null
+        }));
+
+        res.json(formattedAccounts);
+    } catch (error) {
+        console.error('Failed to fetch accounts', error);
+        res.status(500).json({ error: 'Failed to fetch accounts' });
+    }
+});
+
+adminController.update_account = expressAsyncHandler(async (req, res) => {
+    try {
+        const accountId = req.params.id;
+
+        if(!accountId) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        const { isBlocked, isBrand, brandId } = req.body;
+
+        // thiếu hết
+        if (!isBlocked && !isBrand && !brandId) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        // Chuyển đổi giá trị isBlocked từ chuỗi thành boolean
+        const blockedValue = isBlocked === 'Bị khóa';
+
+        // Chuyển đổi giá trị isBrand từ chuỗi thành boolean
+        const brandValue = isBrand === 'Nhãn hàng';
+
+        const updateData = {};
+
+        if (typeof isBlocked !== 'undefined') {
+            updateData.isBlocked = blockedValue;
+        }
+
+        if (typeof isBrand !== 'undefined') {
+            updateData.isBrand = brandValue;
+        }
+
+        if (typeof brandId !== 'undefined') {
+            updateData.brandId = brandId;
+        }
+
+        const updatedAccount = await Account.findByIdAndUpdate(accountId, { $set: updateData }, { new: true });
+        if (!updatedAccount) {
+            return res.status(404).json({ message: 'Account not found' });
+        }
+
+        res.json(updatedAccount);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.delete_account = expressAsyncHandler(async (req, res) => {
+    try {
+        const accountId = req.params.id;
+
+        const account = await Account.findById(accountId);
+        if (!account) {
+            return res.status(404).json({ message: 'Account not found' });
+        }
+        await Account.findByIdAndDelete(accountId);
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.create_account = expressAsyncHandler(async (req, res) => {
+    try {
+        const { name, phoneNumber, password, avatar, gender, description, city, country, isBrand, brandId } = req.body;
+
+        if (!phoneNumber || !password) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        // Chuyển đổi trường avatar thành đối tượng
+        const avatarObject = {
+            filename: '',
+            url: avatar,
+            publicId: '',
+        };
+
+        // Tạo tài khoản mới
+        const newAccount = await Account.create({
+            name,
+            phoneNumber,
+            password,
+            avatar: avatarObject,
+            gender,
+            description,
+            city,
+            country,
+            isBrand,
+            brandId,
+        });
+
+        res.status(201).json(newAccount);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+adminController.fetch_categories = expressAsyncHandler(async (req, res) => {
+    try {
+        const categories = await Category.find({}, 'slug name description')
+            .lean()
+            .exec();
+
+        res.json(categories);
+    } catch (error) {
+        console.error('Failed to fetch categories', error);
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
+
+adminController.update_category = expressAsyncHandler(async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+
+        if (!categoryId) {
+            return res.status(400).json({ message: 'Missing category ID' });
+        }
+
+        const { slug, name, description } = req.body;
+
+        const updateData = {};
+
+        if (slug) {
+            updateData.slug = slug;
+        }
+
+        if (name) {
+            updateData.name = name;
+        }
+
+        if (description) {
+            updateData.description = description;
+        }
+
+        const updatedCategory = await Category.findByIdAndUpdate(
+            categoryId,
+            { $set: updateData },
+            { new: true }
+        );
+
+        if (!updatedCategory) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        res.json(updatedCategory);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.delete_category = expressAsyncHandler(async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        await Category.findByIdAndDelete(categoryId);
+
+        res.json({ message: 'Category deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.create_category = expressAsyncHandler(async (req, res) => {
+    try {
+        const { slug, name, description } = req.body;
+
+        if (!slug || !name || !description) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const newCategory = await Category.create({
+            slug,
+            name,
+            description,
+        });
+
+        res.status(201).json(newCategory);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+adminController.fetch_brands = expressAsyncHandler(async (req, res) => {
+    try {
+        const brands = await Brand.find({}, '_id name slug origin description image')
+            .lean()
+            .exec();
+
+        const formattedBrands = brands.map((brand) => ({
+           ...brand,
+            image: brand.image.url
+        }));
+
+        res.json(formattedBrands);
+    } catch (error) {
+        console.error('Failed to fetch brands', error);
+        res.status(500).json({ error: 'Failed to fetch brands' });
+    }
+});
+
+adminController.update_brand = expressAsyncHandler(async (req, res) => {
+    try {
+        const brandId = req.params.id;
+
+        if(!brandId) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        const { name, slug, origin, description, image } = req.body;
+
+        const updateData = {};
+
+        if (typeof name !== 'undefined') {
+            updateData.name = name;
+        }
+
+        if (typeof slug !== 'undefined') {
+            updateData.slug = slug;
+        }
+
+        if (typeof origin !== 'undefined') {
+            updateData.origin = origin;
+        }
+
+        if (typeof description !== 'undefined') {
+            updateData.description = description;
+        }
+
+        if (typeof image !== 'undefined') {
+            updateData.image = {filename: '', url: image, publicId: ''};
+        }
+
+        const updatedBrand = await Brand.findByIdAndUpdate(brandId, { $set: updateData }, { new: true });
+        if (!updatedBrand) {
+            return res.status(404).json({ message: 'Brand not found' });
+        }
+
+        res.json(updatedBrand);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.delete_brand = expressAsyncHandler(async (req, res) => {
+    try {
+        const brandId = req.params.id;
+
+        const brand = await Brand.findById(brandId);
+        if (!brand) {
+            return res.status(404).json({ message: 'Brand not found' });
+        }
+        await Brand.findByIdAndDelete(brandId);
+
+        res.json({ message: 'Brand deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.create_brand = expressAsyncHandler(async (req, res) => {
+    try {
+        const { name, slug, origin, description, image } = req.body;
+
+        if (!name || !slug || !origin || !description) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        const imageObject = {filename: '', url: image, publicId: ''};
+
+        const newBrand = await Brand.create({
+            name,
+            slug,
+            origin,
+            description,
+            image: imageObject,
+        });
+
+        res.status(201).json(newBrand);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+adminController.fetch_events = expressAsyncHandler(async (req, res) => {
+    try {
+        const events = await Event.find({}, 'image title description startTime endTime participationCondition shortUrl')
+            .lean()
+            .exec();
+
+        res.json(events);
+    } catch (error) {
+        console.error('Failed to fetch events', error);
+        res.status(500).json({ error: 'Failed to fetch events' });
+    }
+});
+
+adminController.update_event = expressAsyncHandler(async (req, res) => {
+    try {
+        const eventId = req.params.id;
+
+        if (!eventId) {
+            return res.status(400).json({ message: 'Missing event ID' });
+        }
+
+        const { image, title, description, startTime, endTime, participationCondition, shortUrl } = req.body;
+
+        const updateData = {};
+
+        if (image) {
+            updateData.image = image;
+        }
+
+        if (title) {
+            updateData.title = title;
+        }
+
+        if (description) {
+            updateData.description = description;
+        }
+
+        if (startTime) {
+            updateData.startTime = startTime;
+        }
+
+        if (endTime) {
+            updateData.endTime = endTime;
+        }
+
+        if (participationCondition) {
+            updateData.participationCondition = participationCondition;
+        }
+
+        if (shortUrl) {
+            updateData.shortUrl = shortUrl;
+        }
+
+        const updatedEvent = await Event.findByIdAndUpdate(
+            eventId,
+            { $set: updateData },
+            { new: true }
+        );
+
+        if (!updatedEvent) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        res.json(updatedEvent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.delete_event = expressAsyncHandler(async (req, res) => {
+    try {
+        const eventId = req.params.id;
+
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        await Event.findByIdAndDelete(eventId);
+
+        res.json({ message: 'Event deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.create_event = expressAsyncHandler(async (req, res) => {
+    try {
+        const { image, title, description, startTime, endTime, participationCondition, shortUrl } = req.body;
+
+        if (!image || !title || !description || !startTime || !endTime || !participationCondition || !shortUrl) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const newEvent = await Event.create({
+            image,
+            title,
+            description,
+            startTime,
+            endTime,
+            participationCondition,
+            shortUrl,
+        });
+
+        res.status(201).json(newEvent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 
 
