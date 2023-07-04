@@ -226,14 +226,14 @@ adminController.create_product = expressAsyncHandler(async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 adminController.fetch_accounts = expressAsyncHandler(async (req, res) => {
     try {
-        const accounts = await Account.find({}, '_id name phoneNumber avatar gender isBlocked description city country skin point level isBrand brandId')
+        const accounts = await Account.find({}, '_id name password phoneNumber avatar gender isBlocked description city country skin point level isBrand brandId')
             .lean()
             .exec();
 
         // Chuyển đổi giá trị isBlocked thành chuỗi "Bị khóa" hoặc "Hoạt động"
         const formattedAccounts = accounts.map(({ skin, ...restProp }) => ({
             ...restProp,
-            avatar: restProp.avatar.url,
+            avatar: restProp.avatar?.url,
             isBlocked: restProp.isBlocked ? 'Bị khóa' : 'Hoạt động',
             skinType: skin.type,
             skinIsSensitive: skin.obstacle.isSensitive ? 'Nhạy cảm': 'Không nhạy cảm',
@@ -257,10 +257,10 @@ adminController.update_account = expressAsyncHandler(async (req, res) => {
             return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
         }
 
-        const { isBlocked, isBrand, brandId } = req.body;
+        const { password, isBlocked, isBrand, brandId } = req.body;
 
         // thiếu hết
-        if (!isBlocked && !isBrand && !brandId) {
+        if (!password && !isBlocked && !isBrand && !brandId) {
             return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
         }
 
@@ -272,6 +272,10 @@ adminController.update_account = expressAsyncHandler(async (req, res) => {
 
         const updateData = {};
 
+        if (typeof password !== 'undefined') {
+            updateData.password = password;
+        }
+
         if (typeof isBlocked !== 'undefined') {
             updateData.isBlocked = blockedValue;
         }
@@ -280,8 +284,10 @@ adminController.update_account = expressAsyncHandler(async (req, res) => {
             updateData.isBrand = brandValue;
         }
 
-        if (typeof brandId !== 'undefined') {
+        if (typeof brandId !== 'undefined' && brandId !== '' && isBrand === 'Nhãn hàng') {
             updateData.brandId = brandId;
+        } else if (brandId === '' && isBrand === 'Tài khoản thường') {
+            updateData.brandId = null;
         }
 
         const updatedAccount = await Account.findByIdAndUpdate(accountId, { $set: updateData }, { new: true });
@@ -338,7 +344,7 @@ adminController.create_account = expressAsyncHandler(async (req, res) => {
             description,
             city,
             country,
-            isBrand,
+            isBrand: isBrand === 'Nhãn hàng',
             brandId,
         });
 
@@ -352,7 +358,7 @@ adminController.create_account = expressAsyncHandler(async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 adminController.fetch_categories = expressAsyncHandler(async (req, res) => {
     try {
-        const categories = await Category.find({}, 'slug name description')
+        const categories = await Category.find({}, '_id slug name description')
             .lean()
             .exec();
 
@@ -446,7 +452,7 @@ adminController.create_category = expressAsyncHandler(async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 adminController.fetch_brands = expressAsyncHandler(async (req, res) => {
     try {
-        const brands = await Brand.find({}, '_id name slug origin description image')
+        const brands = await Brand.find({}, '_id slug name origin description image')
             .lean()
             .exec();
 
@@ -470,16 +476,16 @@ adminController.update_brand = expressAsyncHandler(async (req, res) => {
             return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
         }
 
-        const { name, slug, origin, description, image } = req.body;
+        const { slug, name, origin, description, image } = req.body;
 
         const updateData = {};
 
-        if (typeof name !== 'undefined') {
-            updateData.name = name;
-        }
-
         if (typeof slug !== 'undefined') {
             updateData.slug = slug;
+        }
+
+        if (typeof name !== 'undefined') {
+            updateData.name = name;
         }
 
         if (typeof origin !== 'undefined') {
@@ -525,17 +531,17 @@ adminController.delete_brand = expressAsyncHandler(async (req, res) => {
 
 adminController.create_brand = expressAsyncHandler(async (req, res) => {
     try {
-        const { name, slug, origin, description, image } = req.body;
+        const { slug, name, origin, description, image } = req.body;
 
-        if (!name || !slug || !origin || !description) {
+        if (!slug || !name ||  !origin || !description) {
             return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
         }
 
         const imageObject = {filename: '', url: image, publicId: ''};
 
         const newBrand = await Brand.create({
-            name,
             slug,
+            name,
             origin,
             description,
             image: imageObject,
@@ -551,11 +557,16 @@ adminController.create_brand = expressAsyncHandler(async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 adminController.fetch_events = expressAsyncHandler(async (req, res) => {
     try {
-        const events = await Event.find({}, 'image title description startTime endTime participationCondition shortUrl')
+        const events = await Event.find({}, '_id image title description startTime endTime participationCondition shortUrl')
             .lean()
             .exec();
 
-        res.json(events);
+        const formattedEvents = events.map((event) => ({
+            ...event,
+            image: event.image.url
+        }));
+
+        res.json(formattedEvents);
     } catch (error) {
         console.error('Failed to fetch events', error);
         res.status(500).json({ error: 'Failed to fetch events' });
@@ -574,31 +585,31 @@ adminController.update_event = expressAsyncHandler(async (req, res) => {
 
         const updateData = {};
 
-        if (image) {
-            updateData.image = image;
+        if (typeof image !== 'undefined') {
+            updateData.image = {filename: '', url: image, publicId: ''};
         }
 
-        if (title) {
+        if (typeof title !== 'undefined') {
             updateData.title = title;
         }
 
-        if (description) {
+        if (typeof description !== 'undefined') {
             updateData.description = description;
         }
 
-        if (startTime) {
+        if (typeof startTime !== 'undefined') {
             updateData.startTime = startTime;
         }
 
-        if (endTime) {
+        if (typeof endTime !== 'undefined') {
             updateData.endTime = endTime;
         }
 
-        if (participationCondition) {
+        if (typeof participationCondition !== 'undefined') {
             updateData.participationCondition = participationCondition;
         }
 
-        if (shortUrl) {
+        if (typeof shortUrl !== 'undefined') {
             updateData.shortUrl = shortUrl;
         }
 
@@ -645,8 +656,10 @@ adminController.create_event = expressAsyncHandler(async (req, res) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
+        const imageObject = {filename: '', url: image, publicId: ''};
+
         const newEvent = await Event.create({
-            image,
+            image: imageObject,
             title,
             description,
             startTime,
@@ -661,8 +674,5 @@ adminController.create_event = expressAsyncHandler(async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-
-
 
 module.exports = adminController;

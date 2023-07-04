@@ -21,11 +21,11 @@ const carouselSchema = new mongoose.Schema({
 });
 
 const brandSchema = new mongoose.Schema({
-    name: {
+    slug: {
         type: String,
         required: true
     },
-    slug: {
+    name: {
         type: String,
         required: true
     },

@@ -24,4 +24,9 @@ adminRouter.patch('/update_brand/:id', auth, adminController.update_brand);
 adminRouter.delete('/delete_brand/:id', auth, adminController.delete_brand);
 adminRouter.post('/create_brand', auth, adminController.create_brand);
 
+adminRouter.get('/fetch_events', auth, adminController.fetch_events);
+adminRouter.patch('/update_event/:id', auth, adminController.update_event);
+adminRouter.delete('/delete_event/:id', auth, adminController.delete_event);
+adminRouter.post('/create_event', auth, adminController.create_event);
+
 module.exports = adminRouter;

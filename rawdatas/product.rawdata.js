@@ -1,8 +1,8 @@
 const brands = [
     {
         _id: "64639687ffa8cd1a203b408f",
-        name: "April skin",
         slug: "april_skin",
+        name: "April skin",
         origin: "Hàn Quốc",
         description: "April skin là một thương hiệu mỹ phẩm nổi tiếng hàng đầu tại Hàn Quốc, từng nhận được rất nhiều giải thưởng uy tín cho việc phát triển những dòng sản phẩm từ thiên nhiên thân thiện với sức khỏe và mang đến những công dụng hữu hiệu nhất trong việc làm đẹp đối với phái nữ.",
         image: {
@@ -17,8 +17,8 @@ const brands = [
     },
     {
         _id: "64639687ffa8cd1a203b4090",
-        name: "Ange",
         slug: "ange",
+        name: "Ange",
         origin: "Hàn Quốc",
         description: "ANGE là một thương hiệu nổi tiếng tại Hàn Quốc của công ty TNHH Takos - một nhà sản xuất chuyên về các sản phẩm an toàn cho bé như cắn răng, ngậm nướu, bình tập ăn...có trụ sở chính tại Busan, Hàn Quốc và được thành lập năm 1992\n" +
             "Takos tập trung vào nghiên cứu và phát triển sản phẩm cho bé với thiết kế sáng tạo, độc đáo và an toàn. Thương hiệu này phân phối rộng khắp các siêu thị Hàn Quốc như E-mart, Lotte mart cũng như được Takos xuất khẩu sang các thị trường lớn như Nhật Bản, Bắc Mỹ và Châu Âu",
@@ -34,8 +34,8 @@ const brands = [
     },
     {
         _id: "64639687ffa8cd1a203b4091",
-        name: "Banobagi",
         slug: "banobagi",
+        name: "Banobagi",
         origin: "Hàn Quốc",
         description: "Thương hiệu mỹ phẩm đến từ bệnh viện thẩm mỹ Banobagi. Thành phần trong các sản phẩm đều được phân tích một cách kĩ lưỡng bởi các chuyên gia tư vấn làm đẹp với tiêu chí: không thành phần hóa học, không hóa chất kích ứng da",
         image: {
@@ -50,8 +50,8 @@ const brands = [
     },
     {
         _id: "64639687ffa8cd1a203b4092",
-        name: "BNBG",
         slug: "bnbg",
+        name: "BNBG",
         origin: "Hàn Quốc",
         description: "BNBG là một thương hiệu mặt nạ nổi tiếng ở Hàn Quốc, tiền thân là thương hiệu mặt nạ mang tên Banobagi.",
         image: {
@@ -66,8 +66,8 @@ const brands = [
     },
     {
         _id: "64639687ffa8cd1a203b4093",
-        name: "Chacott",
         slug: "chacott",
+        name: "Chacott",
         origin: "Hàn Quốc",
         description: "Chacott là 1 thương hiệu ba lê nổi tiếng tại Nhật Bản, và cùng với sự phát triển của thương hiệu, chacott phát triển dòng mỹ phẩm chuyên nghiệp dành cho các diễn viên múa Ba lê chuyên nghiệp",
         image: {
