@@ -29,4 +29,7 @@ adminRouter.patch('/update_event/:id', auth, adminController.update_event);
 adminRouter.delete('/delete_event/:id', auth, adminController.delete_event);
 adminRouter.post('/create_event', auth, adminController.create_event);
 
+adminRouter.get('/fetch_posts', auth, adminController.fetch_posts);
+adminRouter.post('/banned_or_unbanned_post/:id', auth, adminController.banned_or_unbanned_post);
+
 module.exports = adminRouter;

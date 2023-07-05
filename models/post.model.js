@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Account = require('./account.model');
 const Report = require('./report.model');
 
+// giữ nguyên tiếng anh, vì API và frontend dùng tiếng việt rồi
 const postSchema = new mongoose.Schema({
     account_id: {
         type: mongoose.Schema.Types.ObjectId,

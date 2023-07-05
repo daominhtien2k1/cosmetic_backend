@@ -6,6 +6,8 @@ const {responseError, setAndSendResponse, callRes} = require('../constants/respo
 const {Category, Brand, Product, Characteristic} = require("../models/product.model");
 const Account = require("../models/account.model");
 const Event = require("../models/event.model");
+const Post = require("../models/post.model");
+const Report = require("../models/report.model");
 
 const adminController = {}
 
@@ -669,6 +671,64 @@ adminController.create_event = expressAsyncHandler(async (req, res) => {
         });
 
         res.status(201).json(newEvent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+adminController.fetch_posts = expressAsyncHandler(async (req, res) => {
+
+    try {
+        const posts = await Post.find({}, '_id account_id described images video banned reports_post')
+            .populate({path: 'account_id', model: Account})
+            .populate({path: 'reports_post', model: Report});
+
+        const formattedPosts = posts.map((post) => {
+            // console.log(post.video); // dù không xuất hiện trong csdl nhưng in ra object {} mà không phải là undefined
+            // console.log([] !== []); // true
+            // console.log([] != []); // true
+            // console.log({} !== {})// true
+            // console.log({} != {})// true
+            // console.log(post.video.toString()); // {}
+            // console.log(Object.keys(post.video).length); // 3 -> ảo ma, vẫn không được
+            return {
+                _id: post._id,
+                author: post.account_id.name,
+                described: post.described,
+                images: (post.images != null && post.images.length !== 0) ? post.images.map((image) => image.url).join('&&') : null,
+                video: (post.video.url != undefined) ? post.video.url : null,
+                banned: post.banned ? 'Bị khóa' : 'Hợp lệ',
+                reports_post: (post.reports_post != null && post.reports_post.length !== 0) ? post.reports_post.map((rp) => rp.subject).join('&&'): null
+                // variableTestNullUndefined: undefined // undefined thì xuất hiện trong response, còn null thì không
+            }
+        });
+
+        res.json(formattedPosts); // Trả về dữ liệu dạng JSON
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.banned_or_unbanned_post = expressAsyncHandler(async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        if (!postId) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return setAndSendResponse(res, responseError.POST_IS_NOT_EXISTED);
+        }
+
+        post.banned = !post.banned;
+        await post.save();
+        return setAndSendResponse(res, responseError.OK);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });

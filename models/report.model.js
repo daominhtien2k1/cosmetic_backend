@@ -13,12 +13,12 @@ const reportSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // Hoàn tác ngay sẽ xóa luôn document, còn Cancel trong quản lý thì chỉ đổi trạng thái
+    // Hoàn tác ngay sẽ xóa luôn document, còn Hủy trong quản lý thì chỉ đổi trạng thái
     status: {
         type: String,
-        enum: ["Pending", "Resolved", "Denied", "Cancelled"],
+        enum: ["Đang giải quyết", "Đã giải quyết", "Từ chối", "Hủy bỏ"],
         required: false,
-        default: "Pending"
+        default: "Đang giải quyết"
     },
     response: {
         type: String,

@@ -971,42 +971,42 @@ reviewsController.report_review = expressAsyncHandler(async (req, res) => {
 
     let detailsModify = "";
     if (details == subject) {
-        for (let subject of subjectArray) {
-            switch (subject) {
-                case 'Spam':
-                    detailsModify = "Nội dung được coi là spam khi chứa thông tin không mong muốn hoặc không liên quan, thường gây phiền toái cho người nhận.";
-                    break;
-                case 'Thông tin sai sự thật':
-                    detailsModify = "Nội dung chứa thông tin không chính xác hoặc thiếu sự xác thực, có thể gây hiểu nhầm hoặc lan truyền thông tin sai lệch.";
-                    break;
-                case 'Bán hàng trái phép':
-                    detailsModify = "Nội dung liên quan đến việc quảng cáo hoặc bán hàng trái phép, vi phạm các quy định và quy tắc của nền tảng.";
-                    break;
-                case 'Nội dung không phù hợp':
-                    detailsModify = "Nội dung không phù hợp là những thông tin, hình ảnh hoặc bình luận vi phạm các quy tắc xã hội và ngữ nghĩa về tôn trọng, lịch sự và đạo đức.";
-                    break;
-                case 'Bình luận gây rối':
-                    detailsModify = "Bình luận gây rối là những ý kiến, lời nhắn hoặc bài viết nhằm gây khó chịu, xao lạc hoặc gây rối trong một cộng đồng hoặc cuộc trò chuyện.";
-                    break;
-                case 'Bình luận xúc phạm':
-                    detailsModify = "Bình luận xúc phạm là những lời nhận xét, phê phán hoặc chỉ trích một người hoặc một nhóm người một cách không tôn trọng hoặc gây tổn thương.";
-                    break;
-                case 'Review chưa đúng sự thật, thiếu khách quan':
-                    detailsModify = "Review chưa đúng sự thật, thiếu khách quan là những đánh giá, nhận xét hoặc đánh giá sản phẩm, dịch vụ mà không tuân thủ các tiêu chí chính xác và khách quan.";
-                    break;
-                default:
-                    detailsModify = "Mô tả không xác định cho chủ đề này.";
-            }
+        switch (subject) {
+            case 'Spam':
+                detailsModify = "Nội dung được coi là spam khi chứa thông tin không mong muốn hoặc không liên quan, thường gây phiền toái cho người nhận.";
+                break;
+            case 'Thông tin sai sự thật':
+                detailsModify = "Nội dung chứa thông tin không chính xác hoặc thiếu sự xác thực, có thể gây hiểu nhầm hoặc lan truyền thông tin sai lệch.";
+                break;
+            case 'Bán hàng trái phép':
+                detailsModify = "Nội dung liên quan đến việc quảng cáo hoặc bán hàng trái phép, vi phạm các quy định và quy tắc của nền tảng.";
+                break;
+            case 'Nội dung không phù hợp':
+                detailsModify = "Nội dung không phù hợp là những thông tin, hình ảnh hoặc bình luận vi phạm các quy tắc xã hội và ngữ nghĩa về tôn trọng, lịch sự và đạo đức.";
+                break;
+            case 'Bình luận gây rối':
+                detailsModify = "Bình luận gây rối là những ý kiến, lời nhắn hoặc bài viết nhằm gây khó chịu, xao lạc hoặc gây rối trong một cộng đồng hoặc cuộc trò chuyện.";
+                break;
+            case 'Bình luận xúc phạm':
+                detailsModify = "Bình luận xúc phạm là những lời nhận xét, phê phán hoặc chỉ trích một người hoặc một nhóm người một cách không tôn trọng hoặc gây tổn thương.";
+                break;
+            case 'Review chưa đúng sự thật, thiếu khách quan':
+                detailsModify = "Review chưa đúng sự thật, thiếu khách quan là những đánh giá, nhận xét hoặc đánh giá sản phẩm, dịch vụ mà không tuân thủ các tiêu chí chính xác và khách quan.";
+                break;
+            default:
+                detailsModify = "Mô tả không xác định cho chủ đề này.";
         }
     }
 
-    await new Report({
+    const newReport = await new Report({
         reporter_id: account._id,
         review_id: id,
         subject: subject,
         details: details != subject ? details : detailsModify,
-        status: "Pending"
+        status: "Đang giải quyết"
     }).save();
+    review.reports_review.push(newReport._id);
+    await review.save();
 
     setAndSendResponse(res, responseError.OK);
     // res.send(account._id)

@@ -786,13 +786,51 @@ postsController.report_post = expressAsyncHandler(async (req, res) => {
     //Reporter and post'author is same person
     if (account._id.toString() === post.account_id.toString()) setAndSendResponse(res, responseError.UNKNOWN_ERROR);
 
-    await new Report({
+    let detailsModify = "";
+    if (details == subject) {
+        switch (subject) {
+            case 'Ảnh khỏa thân':
+                detailsModify = "Nội dung chứa hình ảnh hoặc video không mặc quần áo hoặc tiết lộ quá nhiều về vùng nhạy cảm của cơ thể.";
+                break;
+            case 'Bạo lực':
+                detailsModify = "Nội dung chứa hình ảnh, video hoặc lời nhắn liên quan đến bạo lực với mục đích gây tổn thương hoặc đe dọa người khác.";
+                break;
+            case 'Quấy rồi':
+                detailsModify = "Nội dung liên quan đến hành vi quấy rối, nhằm gây phiền toái, bóc lột hoặc xâm phạm quyền riêng tư của người khác.";
+                break;
+            case 'Tự tử hoặc tự gây thương tích':
+                detailsModify = "Nội dung liên quan đến hành vi tự tử hoặc tự gây thương tích, bao gồm hình ảnh, video hoặc lời nhắn khuyến khích, hỗ trợ hoặc tuyên truyền các hành vi này.";
+                break;
+            case 'Thông tin sai sự thật':
+                detailsModify = "Nội dung chứa thông tin không chính xác hoặc thiếu sự xác thực, có thể gây hiểu nhầm hoặc lan truyền thông tin sai lệch.";
+                break;
+            case 'Spam':
+                detailsModify = "Nội dung được coi là spam khi chứa thông tin không mong muốn hoặc không liên quan, thường gây phiền toái cho người nhận.";
+                break;
+            case 'Bán hàng trái phép':
+                detailsModify = "Nội dung liên quan đến việc quảng cáo hoặc bán hàng trái phép, vi phạm các quy định và quy tắc của nền tảng.";
+                break;
+            case 'Ngôn từ gây thù ghét':
+                detailsModify = "Nội dung chứa ngôn từ, lời nhắn hoặc bài viết mang tính chất xúc phạm, kích động sự căm ghét hoặc phân biệt đối với một nhóm người.";
+                break;
+            case 'Khủng bố':
+                detailsModify = "Nội dung liên quan đến hoạt động khủng bố, bao gồm tuyên truyền, quảng bá hoặc ủng hộ các hành động khủng bố.";
+                break;
+            default:
+                detailsModify = "Mô tả không xác định cho chủ đề này.";
+        }
+    }
+
+    const newReport = await new Report({
         reporter_id: account._id,
         post_id: id,
         subject: subject,
-        details: details,
-        status: "Pending"
+        details: details != subject ? details : detailsModify,
+        status: "Đang giải quyết"
     }).save();
+
+    post.reports_post.push(newReport._id);
+    await post.save();
 
     setAndSendResponse(res, responseError.OK);
     // res.send(account._id)

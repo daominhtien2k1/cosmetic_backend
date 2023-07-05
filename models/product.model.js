@@ -88,6 +88,7 @@ const categorySchema = new mongoose.Schema({
     }
 });
 
+// thống nhất, tất cả các trường chuyển sang tiếng việt
 const productSchema = new mongoose.Schema({
     slug: {
         type: String,
@@ -224,6 +225,7 @@ const couponSchema = new mongoose.Schema({
     brand_id: {type: mongoose.Schema.Types.ObjectId, ref: 'brands', required: false}
 });
 
+// giữ nguyên tiếng anh, vì API và frontend dùng tiếng việt rồi
 // 1 Product có nhiều Review (lúc này bắt chước Product - Comment) , 1 Review có nhiều Reply (lúc này bắt chước Product - Comment)
 const reviewSchema = new mongoose.Schema({
     /*  Quick: rating
