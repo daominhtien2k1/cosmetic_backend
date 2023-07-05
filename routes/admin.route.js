@@ -32,4 +32,7 @@ adminRouter.post('/create_event', auth, adminController.create_event);
 adminRouter.get('/fetch_posts', auth, adminController.fetch_posts);
 adminRouter.post('/banned_or_unbanned_post/:id', auth, adminController.banned_or_unbanned_post);
 
+adminRouter.get('/fetch_reviews', auth, adminController.fetch_reviews);
+adminRouter.post("/banned_or_unbanned_review/:id", auth, adminController.banned_or_unbanned_review);
+
 module.exports = adminRouter;

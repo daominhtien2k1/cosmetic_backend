@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const expressAsyncHandler = require("express-async-handler");
 
 const {responseError, setAndSendResponse, callRes} = require('../constants/response_code');
-const {Category, Brand, Product, Characteristic} = require("../models/product.model");
+const {Category, Brand, Product, Characteristic, Review} = require("../models/product.model");
 const Account = require("../models/account.model");
 const Event = require("../models/event.model");
 const Post = require("../models/post.model");
@@ -728,6 +728,59 @@ adminController.banned_or_unbanned_post = expressAsyncHandler(async (req, res) =
 
         post.banned = !post.banned;
         await post.save();
+        return setAndSendResponse(res, responseError.OK);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+adminController.fetch_reviews = expressAsyncHandler(async (req, res) => {
+
+    try {
+        const reviews = await Review.find({classification: { $in: ["Standard", "Detail", "Instruction"] }}, '_id classification product_id userReview_id rating title content described images video banned reports_review')
+            .populate({path: 'userReview_id', model: Account})
+            .populate({path: 'reports_review', model: Report});
+
+        const formattedReviews = reviews.map((review) => {
+            return {
+                _id: review._id,
+                classification: review.classification == 'Standard' ? 'Tiêu chuẩn' : (review.classification == 'Detail' ? 'Chi tiết': 'Hướng dẫn'),
+                author: review.userReview_id.name,
+                rating: review.rating != undefined ? review.rating : null,
+                title: review.title,
+                content: review.content,
+                images: (review.images != null && review.images.length !== 0) ? review.images.map((image) => image.url).join('&&') : null,
+                video: (review.video.url != undefined) ? review.video.url : null,
+                banned: review.banned ? 'Bị khóa' : 'Hợp lệ',
+                reports_review: (review.reports_review != null && review.reports_review.length !== 0) ? review.reports_review.map((rr) => rr.subject).join('&&'): null
+            }
+        });
+
+        res.json(formattedReviews); // Trả về dữ liệu dạng JSON
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+adminController.banned_or_unbanned_review = expressAsyncHandler(async (req, res) => {
+    try {
+        const reviewId = req.params.id;
+
+        if (!reviewId) {
+            return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+        }
+
+        const review = await Review.findById(reviewId);
+
+        if (!review) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_NOT_EXISTED);
+        }
+
+        review.banned = !review.banned;
+        await review.save();
         return setAndSendResponse(res, responseError.OK);
     } catch (error) {
         console.error(error);
