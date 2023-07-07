@@ -5,18 +5,21 @@ const expressAsyncHandler = require("express-async-handler");
 const Account = require("../models/account.model");
 const Post = require("../models/post.model.js");
 const Comment = require("../models/comment.model");
-
 const Report = require("../models/report.model");
 const Video = require("../models/video.model");
-
 const Event = require("../models/event.model");
 const { Brand, Category, Product, Review, Characteristic} = require("../models/product.model");
 const Reply = require("../models/reply.model");
+const Search = require("../models/search.model");
+
 const { posts, comments } = require("./post.rawdata");
 const accounts = require("./account.rawdata");
 const videos = require("./video.rawdata");
 const events = require("./event.rawdata");
 const {brands, categories, products, characteristics, reviews, replies} = require("./product.rawdata");
+
+const realAccounts = require("./real_data/account.realdata");
+const realSearches = require("./real_data/search.realdata");
 
 var nouns = [
   "bird",
@@ -220,7 +223,8 @@ importDataRouter.post(
   "/accounts",
   expressAsyncHandler(async (req, res) => {
     await Account.remove({});
-    const importAccounts = await Account.insertMany(accounts);
+    // const importAccounts = await Account.insertMany(accounts);
+    const importAccounts = await Account.insertMany(realAccounts);
     res.send({ importAccounts });
   })
 );
@@ -306,6 +310,14 @@ importDataRouter.post("/replies",
       await Reply.remove({});
       const importReplies = await Reply.insertMany(replies);
       res.send({ importReplies });
+    })
+);
+
+importDataRouter.post("/searches",
+    expressAsyncHandler(async (req, res) => {
+      await Search.remove({});
+      const importSearches = await Search.insertMany(realSearches);
+      res.send({ importSearches });
     })
 );
 

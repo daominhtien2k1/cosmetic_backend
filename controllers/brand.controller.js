@@ -222,5 +222,21 @@ brandsController.get_followed_brands = expressAsyncHandler(async (req, res) => {
 
 });
 
+brandsController.get_list_brands = expressAsyncHandler(async (req,res) => {
+    try {
+        const brands = await Brand.find({}, '_id name image').lean(); // không có lean ảo ma lắm
+
+        const formattedBrands = brands.map((brand) => ({
+            ...brand,
+            image: brand.image.url
+        }));
+
+        res.json(formattedBrands);
+    } catch (error) {
+        console.error('Failed to fetch brands', error);
+        res.status(500).json({ error: 'Failed to fetch brands' });
+    }
+});
+
 
 module.exports = brandsController;

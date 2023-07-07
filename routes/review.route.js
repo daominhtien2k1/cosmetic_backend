@@ -16,5 +16,7 @@ reviewRouter.get("/retrieve_review", auth, reviewsController.retrieve_review);
 reviewRouter.post("/edit_instruction_review", uploadFile, auth, reviewsController.edit_instruction_review);
 reviewRouter.post("/report_review", auth, reviewsController.report_review);
 
+reviewRouter.get("/get_list_deleted_banned_reviews", auth, reviewsController.get_list_deleted_banned_reviews);
+
 
 module.exports = reviewRouter;

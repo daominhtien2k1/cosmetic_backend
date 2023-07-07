@@ -8,7 +8,12 @@ const accountSchema = new mongoose.Schema({
   name: {
     type: String,
     required: false,
-    default: "UserName",
+    default: "Người dùng",
+  },
+  phoneNumber: {
+    type: String,
+    unique: true,
+    required: true,
   },
   password: {
     type: String,
@@ -16,21 +21,16 @@ const accountSchema = new mongoose.Schema({
     min: 6,
     required: true,
   },
-  phoneNumber: {
-    type: String,
-    unique: true,
-    required: true,
-  },
   avatar: {
-    filename: String,
-    url: String,
-    publicId: String,
+    filename: {type: String, default: 'default_avatar.png'},
+    url: {type: String, default: 'https://res.cloudinary.com/dnway4ykc/image/upload/v1688633857/datn/images/default_avatar_s559gq.png'},
+    publicId: {type: String, default: 'default_avatar'},
     required: false,
   },
   coverImage: {
-    filename: String,
-    url: String,
-    publicId: String,
+    filename: {type: String, default: 'cover_image.png'},
+    url: {type: String, default: 'https://res.cloudinary.com/dnway4ykc/image/upload/v1688633966/datn/images/cover_image_gjdtlm.png'},
+    publicId: {type: String, default: 'cover_image'},
     required: false,
   },
   gender: {
@@ -64,6 +64,7 @@ const accountSchema = new mongoose.Schema({
   description: {
     type: String,
     required: false,
+    default: 'Hiện chưa có mô tả nào'
   },
   link: {
     type: String,
@@ -72,10 +73,12 @@ const accountSchema = new mongoose.Schema({
   city: {
     type: String,
     required: false,
+    default: 'Hà Nội'
   },
   country: {
     type: String,
     required: false,
+    default: 'Việt Nam'
   },
   coordinates: {
     latitude: String,
@@ -176,14 +179,15 @@ accountSchema.set("timestamps", true);
 
 // Do not declare methods using ES6 arrow functions (=>). Arrow functions explicitly prevent binding this, so your method will not have access to the document ...
 accountSchema.methods.getDefaultAvatar = function () {
-  return "https://res.cloudinary.com/it4895/image/upload/v1607791757/it4895/avatars/default-avatar_jklwc7.jpg";
+  return "https://res.cloudinary.com/dnway4ykc/image/upload/v1688633857/datn/images/default_avatar_s559gq.png";
 };
 accountSchema.methods.getAvatar = function () {
   // console.log(this.avatar);
   if (!this.avatar)
-    return "https://res.cloudinary.com/it4895/image/upload/v1607791757/it4895/avatars/default-avatar_jklwc7.jpg";
+    return "https://res.cloudinary.com/dnway4ykc/image/upload/v1688633857/datn/images/default_avatar_s559gq.png";
   return this.avatar.url;
 };
+
 
 const Account = mongoose.model("Account", accountSchema);
 

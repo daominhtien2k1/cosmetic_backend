@@ -280,14 +280,16 @@ searchController.search_sth = expressAsyncHandler(async (req,res) => {
                     let statusFriend = "Unknown";
                     // console.log(list_my_friend.find(element => element.friend.toString() === account._id.toString()))
                     // console.log(list_my_friend.find(element => element.friend == account._id.toString()))
-                    if (list_my_friend.find(element => element.friend.toString() === account._id.toString()) != null) {
+                    if (req.account.id === account._id.toString()) {
+                        statusFriend = "Me";
+                    } else if (list_my_friend.find(element => element.friend.toString() === account._id.toString()) != null) {
                         statusFriend = "Friend";
                     } else if (list_my_sent.find(element => element.toUser.toString() === account._id.toString()) != null) {
                         statusFriend = "Sent friend request";
                     } else if (list_my_received.find(element => element.fromUser.toString() === account._id.toString()) != null) {
                         statusFriend = "Received friend request";
                     } else if ( list_my_blocked_accounts.find(element => element.account.toString() === account._id.toString()) != null
-                        || list_blocked_accounts_of_account.find(element => element.account.toString() === req.account._id.toString())  != null ) {
+                        || list_blocked_accounts_of_account.find(element => element.account.toString() === req.account._id.toString()) != null ) {
                         statusFriend = "Block";
                     } else {
                         statusFriend = "Unknown";
@@ -392,15 +394,22 @@ searchController.get_list_top_searches = expressAsyncHandler(async (req,res) => 
         const topSearches = await Search.aggregate([
             { $group: { _id: '$keyword', count: { $sum: 1 } } },
             { $sort: { count: -1 } },
-            { $limit: 10 },
+            { $limit: 5 },
         ]);
 
         if (topSearches.length < 1) return setAndSendResponse(res, responseError.NO_DATA);
 
+        const result = topSearches.map(s => {
+            return {
+                keyword: s._id,
+                count: s.count
+            }
+        });
+
         res.status(responseError.OK.statusCode).json({
             code: responseError.OK.body.code,
             message: responseError.OK.body.message,
-            data: topSearches
+            data: result
         });
 
     } catch (error) {
@@ -447,8 +456,6 @@ searchController.search_suggestions = expressAsyncHandler(async (req,res) => {
             } else if (secondWord == "" && thirdWord != "") { // trọn từ
                 highlightedText = `${firstWord} <b>${thirdWord}</b>`;
             }
-
-
 
             return highlightedText;
         });

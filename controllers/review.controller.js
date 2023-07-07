@@ -1012,5 +1012,48 @@ reviewsController.report_review = expressAsyncHandler(async (req, res) => {
     // res.send(account._id)
 });
 
+// merge 2 cái report và auto-bot + admin banned
+reviewsController.get_list_deleted_banned_reviews = expressAsyncHandler(async (req, res) => {
+    try {
+        const reviews = await Review
+            .find({userReview_id: req.account._id, classification: { $in: ["Standard", "Detail", "Instruction"] }, banned: true})
+            .populate({ path: 'product_id', model: 'Product' })
+            .sort("-createdAt");
+
+        // tự động khóa không cần người khác report
+        const reviewsResult = reviews.map((r) => {
+            return {
+                subject: "Bị khóa do Bot/Admin",
+                details: "Bị khóa do Bot/Admin",
+                review_id: r._id,
+                classification: r.classification,
+                productImage: r.product_id.images[0].url,
+                productName: r.product_id.name,
+                account_id: r.account_id,
+                rating: r.rating != undefined ? r.rating : null,
+                title: r.title,
+                content: r.content
+            }
+        });
+
+        // nếu là khóa do report thì set lại subject và details
+        for (let r of reviewsResult) {
+            let report = await Report.findOne({review_id: r.review_id});
+            if (report != null) {
+                r.subject = report.subject,
+                r.details = report.details
+            }
+        }
+
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: reviewsResult
+        })
+
+    } catch (e) {
+
+    }
+})
 
 module.exports = reviewsController;

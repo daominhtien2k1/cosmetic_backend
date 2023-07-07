@@ -954,7 +954,7 @@ postsController.unlike_post = expressAsyncHandler(async (req, res) => {
 });
 
 // merge 2 cái report và auto-bot + admin banned
-postsController.get_deleted_banned_post = expressAsyncHandler(async (req, res) => {
+postsController.get_list_deleted_banned_posts = expressAsyncHandler(async (req, res) => {
     try {
         const posts = await Post.find({account_id: req.account._id, banned: true}).sort("-createdAt");
 

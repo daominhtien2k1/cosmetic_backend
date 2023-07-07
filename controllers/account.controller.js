@@ -177,9 +177,9 @@ accountsController.set_accept_friend = expressAsyncHandler(async (req, res) => {
 
     if (!isValidId(sender_id) || !isValidId(receiver_id) || sender_id === receiver_id) return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
 
-    let list_of_sender = await Account.findOne({_id: sender_id}).select(["friends", "friendRequestSent", "blockedAccounts",]);
+    let list_of_sender = await Account.findOne({_id: sender_id}).select(["friends", "friendRequestSent", "blockedAccounts"]);
     
-    let list_of_receiver = await Account.findOne({_id: receiver_id}).select(["friendRequestReceived", "blockedAccounts",]);
+    let list_of_receiver = await Account.findOne({_id: receiver_id}).select(["friendRequestReceived", "blockedAccounts"]);
 
     if (list_of_sender == null || list_of_receiver == null) {
         return setAndSendResponse(res, responseError.NO_DATA);
@@ -363,10 +363,9 @@ accountsController.get_list_friend_request_received = expressAsyncHandler(async 
 
     let account = await Account.findOne({_id: _id}).select("friendRequestReceived -_id" );
 
-    let friendRequestReceived = []
-
+    let friendRequestReceived = [];
     for (let friend of account["friendRequestReceived"]){
-      let account_id = friend["fromUser"]
+      let account_id = friend["fromUser"];
       let _account = await Account.findOne({_id: account_id}).select(["name", "avatar"]);
       friendRequestReceived.push({
         fromUser: account_id,
@@ -448,7 +447,6 @@ accountsController.del_friend = expressAsyncHandler(async (req, res) => {
         await Account.updateOne(filter_person, update_person);
 
         var new_list_friend_of_account = [];
-
         for (let i of list_friend_of_account) {
             if (i["friend"] != person_id) {
                 new_list_friend_of_account.push(i);
@@ -488,7 +486,7 @@ accountsController.get_list_unknown_people = expressAsyncHandler(async (req, res
       "friendRequestSent",
     ]);
 
-    let listPeople = [];
+    let listPeople = []; // cần loại đi bọn đã là bạn, block, bạn bè đã gửi, nhận
     if (!account) {
       return setAndSendResponse(res, responseError.NO_DATA);
     } else {
@@ -514,7 +512,6 @@ accountsController.get_list_unknown_people = expressAsyncHandler(async (req, res
       }).select("_id");
 
       listUnknownPeople = [];
-      
       for (let people of listUnknownPeopleIdArray) {
         let account_id = people["_id"];
         let _account = await Account.findOne({_id: account_id}).select(["name", "avatar"]);
@@ -778,33 +775,34 @@ accountsController.change_info_after_signup = expressAsyncHandler(async (req, re
     return setAndSendResponse(res, responseError.OK);
 });
 
-accountsController.get_block_account = expressAsyncHandler(async (req, res) => {
-    const {_id} = req.account?._id;
-    if (!_id) {
-        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
-    } else if (!isValidId(_id)) {
-        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
-    }
-
-    let account = await Account.findOne({_id: _id});
+accountsController.get_list_blocked_accounts = expressAsyncHandler(async (req, res) => {
+    let account = await Account.findById(req.account._id);
 
     if (account == null) {
       return setAndSendResponse(res, responseError.NO_DATA);
-  } else {
-    let data = [];
-    for (let item of account.blockedAccounts) {
-      const acc = await Account.findById({ _id: item.account });
-      data.push({
-        user: {
-          id: item.account,
-          name: acc.name,
-          avatar: acc.avatar.url,
-        },
-        createdAt: item.createdAt,
-      });
     }
-    return callRes(res, responseError.OK, { blockedAccounts: data });
-  }
+
+    let blockedAccounts = [];
+    for (let item of account["blockedAccounts"]) {
+        const acc = await Account.findOne({ _id: item.account });
+        blockedAccounts.push({
+            account: item.account,
+            name: acc.name,
+            avatar: acc.avatar.url
+        });
+    }
+    if (blockedAccounts == null) {
+        return setAndSendResponse(res, responseError.NO_DATA);
+    } else {
+        let result = {
+            blockedAccounts: blockedAccounts
+        }
+        res.status(responseError.OK.statusCode).json({
+            code: responseError.OK.body.code,
+            message: responseError.OK.body.message,
+            data: result
+        });
+    }
 });
 
 // block sẽ xóa trường friends, friendRequestSent, friendRequestReceived của cả 2 bên
@@ -843,36 +841,54 @@ accountsController.block_by_id = expressAsyncHandler(async (req, res) => {
 
 })
 
-accountsController.remove_block_by_id = expressAsyncHandler(async (req, res) => {
-    const {id} = req.body;
-    if(!id)  {
-        return callRes(res, responseError.PARAMETER_IS_NOT_ENOUGH);
-    }
-    if(!Account.findById(id)) {
-        return callRes(res. responseError.NO_DATA);
-    }
-    if(id == req?.account?._id){
-        
-        return callRes(res. responseError.NOT_ACCESS);
-    }
+accountsController.remove_blocked_account = expressAsyncHandler(async (req, res) => {
+    const {person_id} = req.body;
+    const account_id = req.account.id;
+    // ảo ma, vẫn chạy được như nhau
+    // console.log(req.account._id);
+    // console.log(req.account.id);
+    // console.log(typeof req.account._id); // object
+    // console.log(typeof req.account.id); // string
+    // console.log(typeof person_id); // string
+
+    if (!person_id || !account_id) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+
+    if (!isValidId(person_id) || !isValidId(account_id) || person_id === account_id) return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+
     try {
-        user = await Account.findOne({_id: req.account._id});
-        if (
-            !user.blockedAccounts.find(item =>{
-                return item.account.equals(id)
-            })
-        ){
+        let account = await Account.findOne({_id: account_id}); // OK
+        // let account2 = await Account.findOne({_id: req.account._id}); // OK
+        // let account3 = await Account.findById(req.account.id); // OK
+        // let account4 = await Account.findById(req.account._id); // OK
+
+        // console.log(
+        //     account.blockedAccounts.find(item => {
+        //       // console.log(item.account);
+        //       // console.log(typeof item.account); // object
+        //       //   console.log(item.account.equals(person_id)); // true
+        //       //   console.log(item.account == person_id); // true
+        //       //   console.log(item.account === person_id); // false
+        //       //   console.log(item.account.toString() == person_id); // true
+        //       //   console.log(item.account.toString() === person_id); // true
+        //       //   console.log(item.account.toString() === person_id.toString()); // true
+        //       return item.account.equals(person_id);
+        //     })
+        // );
+
+        if (!account.blockedAccounts.find(item => item.account.equals(person_id))) {
             return setAndSendResponse(res, responseError.HAS_NOT_BLOCK);
         }
-        await Account.findOneAndUpdate({_id: req.account._id}, 
-            {$pull: 
-                {blockedAccounts: 
-                    {account: id,}
+
+        await Account.findOneAndUpdate({_id: account_id}, {
+            $pull: {
+                blockedAccounts: {
+                    account: person_id
                 }
             }
-        );
+        });
         return setAndSendResponse(res, responseError.OK);
     } catch (err) {
+        console.log(err);
         return setAndSendResponse(res, responseError.CAN_NOT_CONNECT_TO_DB);
     }
 

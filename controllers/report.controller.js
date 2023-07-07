@@ -11,6 +11,7 @@ const {Review} = require("../models/product.model");
 
 const reportsController = {};
 
+// đang để tạm người dùng khác
 reportsController.get_list_reported_posts = expressAsyncHandler(async (req, res) => {
     const reports = await Report.find({post_id: { $ne: null } }).populate({path: 'post_id', model: Post}).sort("-createdAt");
     const resultsMustFilter = reports.map((report) => {
