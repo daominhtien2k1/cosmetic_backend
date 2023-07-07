@@ -597,7 +597,11 @@ const realAccounts = [
         "description": "Xin chào! Tôi là Trần Thị Ngọc. Tôi là một người yêu thích âm nhạc và thích hát và chơi nhạc cụ. Tôi thích nghệ thuật và thường tham gia các hoạt động vẽ tranh và sáng tác. Tôi cũng là một người yêu thiên nhiên và thích đi du lịch và khám phá những địa điểm mới. Rất mong được kết bạn và chia sẻ niềm vui và sở thích của tôi với mọi người!",
         "city": "Đà Nẵng",
         "country": "Việt Nam",
-        "blockedAccounts": [],
+        "blockedAccounts": [
+            {
+                account: "63bbff18fc13ae6493001001",
+            }
+        ],
         "friends": [],
         "friendRequestReceived": [],
         "friendRequestSent": [],
