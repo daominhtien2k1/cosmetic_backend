@@ -21,6 +21,9 @@ const {brands, categories, products, characteristics, reviews, replies} = requir
 const realAccounts = require("./real_data/account.realdata");
 const realSearches = require("./real_data/search.realdata");
 const realPosts = require("./real_data/post.realdata");
+const realCategories = require("./real_data/category.realdata");
+const realBrands = require("./real_data/brand.realdata");
+const realProducts = require("./real_data/product.realdata");
 
 var nouns = [
   "bird",
@@ -270,7 +273,8 @@ importDataRouter.post("/events",
 importDataRouter.post("/brands",
     expressAsyncHandler(async (req, res) => {
       await Brand.remove({});
-      const importBrands = await Brand.insertMany(brands);
+      // const importBrands = await Brand.insertMany(brands);
+      const importBrands = await Brand.insertMany(realBrands);
       res.send({ importBrands });
     })
 );
@@ -278,7 +282,8 @@ importDataRouter.post("/brands",
 importDataRouter.post("/categories",
     expressAsyncHandler(async (req, res) => {
       await Category.remove({});
-      const importCategories = await Category.insertMany(categories);
+      // const importCategories = await Category.insertMany(categories);
+      const importCategories = await Category.insertMany(realCategories);
       res.send({ importCategories });
     })
 );
@@ -286,7 +291,8 @@ importDataRouter.post("/categories",
 importDataRouter.post("/products",
     expressAsyncHandler(async (req, res) => {
       await Product.remove({});
-      const importProducts = await Product.insertMany(products);
+      // const importProducts = await Product.insertMany(products);
+      const importProducts = await Product.insertMany(realProducts);
       res.send({ importProducts });
     })
 );
