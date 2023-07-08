@@ -296,7 +296,7 @@ postsController.get_list_posts_by_account_id = expressAsyncHandler(async (req, r
 
 
 postsController.add_post = expressAsyncHandler(async (req, res) => {
-    var {described, status} = req.body;
+    var {described, status, classification} = req.body;
 
     // console.log(req.body);
     let image, video;
@@ -400,6 +400,7 @@ postsController.add_post = expressAsyncHandler(async (req, res) => {
     post.account_id = req.account._id;
     post.described = described;
     post.status = status;
+    if (classification) post.classification = classification;
 
     try {
         const savedPost = await post.save();

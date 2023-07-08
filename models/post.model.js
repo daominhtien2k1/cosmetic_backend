@@ -36,12 +36,12 @@ const postSchema = new mongoose.Schema({
     },
     canComment: {
         type: Boolean,
-        required: true,
+        required: false,
         default: true
     },
     banned: {
         type: Boolean,
-        required: true,
+        required: false,
         default: false
     },
     reports_post: [{

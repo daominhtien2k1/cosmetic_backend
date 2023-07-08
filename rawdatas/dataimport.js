@@ -20,6 +20,7 @@ const {brands, categories, products, characteristics, reviews, replies} = requir
 
 const realAccounts = require("./real_data/account.realdata");
 const realSearches = require("./real_data/search.realdata");
+const realPosts = require("./real_data/post.realdata");
 
 var nouns = [
   "bird",
@@ -234,7 +235,8 @@ importDataRouter.post(
   "/posts",
   expressAsyncHandler(async (req, res) => {
     await Post.remove({});
-    const importPosts = await Post.insertMany(posts);
+    // const importPosts = await Post.insertMany(posts);
+    const importPosts = await Post.insertMany(realPosts);
     res.send({ importPosts });
   })
 );
