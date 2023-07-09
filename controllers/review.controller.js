@@ -82,7 +82,7 @@ reviewsController.get_review = expressAsyncHandler(async (req, res) => {
                 name: review.userReview_id.name,
                 avatar: review.userReview_id.getAvatar()
             },
-            is_setted_useful: review.settedUsefulAccounts.includes(req.account._id),
+            is_setted_useful: review.settedUsefulAccounts.map(x => x._id).includes(req.account._id),
             is_blocked: isBlocked,
             can_edit: req.account._id.equals(review.userReview_id._id) ? (review.banned ? false : true) : false,
             banned: review.banned,
@@ -135,7 +135,7 @@ reviewsController.get_review = expressAsyncHandler(async (req, res) => {
 // Standard & Detail - do instruction ở UI riêng
 reviewsController.get_list_reviews = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
-    var {index, count, last_id} = req.query;
+    var {index, count, last_id} = req.query; // đang set là 10 ở frontend
     // console.log(req.query)
 
     if (!product_id || !index || !count) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
@@ -1061,5 +1061,155 @@ reviewsController.get_list_deleted_banned_reviews = expressAsyncHandler(async (r
 
     }
 })
+
+reviewsController.setted_useful_review = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try {
+        let review = await Review.findById(id);
+        if (review == null) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_NOT_EXISTED);
+        }
+
+        if (review.banned) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_BANNED);
+        }
+
+        let author = await Account.findOne({_id: review.userReview_id}).exec();
+        if (author == null) setAndSendResponse(res, responseError.NO_DATA);
+        let user = req.account;
+
+        var isBlocked = false;
+        if (author?.blockedAccounts.length != 0) {
+            isBlocked = author?.blockedAccounts.findIndex((element) => {
+                return element.account.toString() === user._id.toString();
+            }) !== -1;
+        }
+
+        if (!isBlocked) {
+            if (user?.blockedAccounts.length != 0) {
+                isBlocked = user?.blockedAccounts?.findIndex((element) => {
+                    return element.account.toString() === author._id.toString();
+                }) !== -1;
+            }
+        }
+        if (isBlocked) return callRes(res, responseError.NOT_ACCESS, 'Người review đã chặn bạn / Bạn chặn người review, do đó không thể set useful bài review');
+
+        if (
+            review?.settedUsefulAccounts.findIndex((element) => {
+                return element.equals(user._id);
+            }) != -1
+        )
+            return setAndSendResponse(res, responseError.HAS_BEEN_SETTED_USEFUL);
+        else {
+            await Review.findOneAndUpdate(
+                {_id: id},
+                {
+                    $push: {settedUsefulAccounts: {_id: user._id}}
+                }
+            );
+
+            var updatedReview = await Review.findOneAndUpdate(
+                {_id: id},
+                {$inc: {usefuls: 1}},
+                { new: true }
+            );
+
+            res.status(responseError.OK.statusCode).json({
+                code: responseError.OK.body.code,
+                message: responseError.OK.body.message,
+                data: {
+                    usefuls: updatedReview.usefuls
+                }
+            });
+        }
+    } catch (err) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+reviewsController.unsetted_useful_review = expressAsyncHandler(async (req, res) => {
+    const id = req.body.id;
+    if (id === undefined)
+        return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    try {
+        let review = await Review.findById(id);
+        if (review == null) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_NOT_EXISTED);
+        }
+
+        if (review.banned) {
+            return setAndSendResponse(res, responseError.REVIEW_IS_BANNED);
+        }
+
+        let author = await Account.findOne({_id: review.userReview_id}).exec();
+        if (author == null) setAndSendResponse(res, responseError.NO_DATA);
+        let user = req.account;
+
+        // chỗ này kiểm tra cả block, khác với unlike post
+        var isBlocked = false;
+        if (author?.blockedAccounts.length != 0) {
+            isBlocked = author?.blockedAccounts.findIndex((element) => {
+                return element.account.toString() === user._id.toString();
+            }) !== -1;
+        }
+
+        if (!isBlocked) {
+            if (user?.blockedAccounts.length != 0) {
+                isBlocked = user?.blockedAccounts?.findIndex((element) => {
+                    return element.account.toString() === author._id.toString();
+                }) !== -1;
+            }
+        }
+        if (isBlocked) return callRes(res, responseError.NOT_ACCESS, 'Người review đã chặn bạn / Bạn chặn người review, do đó không thể set un useful bài review');
+
+        if (
+            review?.settedUsefulAccounts.findIndex((element) => {
+                return element.equals(user._id);
+            }) == -1
+        )
+            return setAndSendResponse(res, responseError.HAS_NOT_BEEN_SETTED_USEFUL);
+        else {
+            await Review.findOneAndUpdate(
+                {_id: id},
+                {
+                    // $pull: {settedUsefulAccounts: {_id: user._id}} // không được, ảo ma
+                    $pull: {settedUsefulAccounts: user._id}
+                }
+            );
+
+            var updatedReview = await Review.findOneAndUpdate(
+                {_id: id},
+                {$inc: {usefuls: -1}},
+                { new: true }
+            );
+
+            res.status(responseError.OK.statusCode).json({
+                code: responseError.OK.body.code,
+                message: responseError.OK.body.message,
+                data: {
+                    usefuls: updatedReview.usefuls
+                }
+            });
+        }
+    } catch (err) {
+        return setAndSendResponse(res, responseError.UNKNOWN_ERROR);
+    }
+});
+
+
 
 module.exports = reviewsController;

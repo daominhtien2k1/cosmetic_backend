@@ -293,7 +293,20 @@ const responseError = {
             message: "Has not been followed"
         }
     },
-
+    HAS_BEEN_SETTED_USEFUL: {
+        statusCode: 400,
+        body: {
+            code: "710",
+            message: "Has been setted useful",
+        },
+    },
+    HAS_NOT_BEEN_SETTED_USEFUL: {
+        statusCode: 400,
+        body: {
+            code: "711",
+            message: "Has not been setted useful",
+        },
+    }
 
 }
 

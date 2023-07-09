@@ -929,6 +929,8 @@ postsController.unlike_post = expressAsyncHandler(async (req, res) => {
         if (author == null) setAndSendResponse(res, responseError.NO_DATA);
         let user = req.account;
 
+        // không có kiểm tra block ở đây, vì khi nó block mình hoặc mình block nó, thì vẫn unlike được, giống kiểu chia tay đòi quà
+
         if (
             post?.likedAccounts.findIndex((element) => {
                 return element.equals(user._id);
