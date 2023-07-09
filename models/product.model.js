@@ -149,13 +149,13 @@ const productSchema = new mongoose.Schema({
         required: false,
         default: 0
     },
-    // số lượng đánh giá
+    // số lượng đánh giá -- được cập nhật khi gọi get_product
     reviews: {
         type: Number,
         required: false,
         default: 0
     },
-    // trung bình rate sản phẩm
+    // trung bình rate sản phẩm -- được cập nhật khi gọi get_product
     rating: {
         type: Number,
         required: false,

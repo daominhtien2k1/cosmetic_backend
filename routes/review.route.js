@@ -20,6 +20,7 @@ reviewRouter.get("/get_list_deleted_banned_reviews", auth, reviewsController.get
 
 reviewRouter.post("/setted_useful_review", auth, reviewsController.setted_useful_review); // checked
 reviewRouter.post("/unsetted_useful_review", auth, reviewsController.unsetted_useful_review); // checked
+reviewRouter.delete("/delete_review/:id", auth, reviewsController.delete_review); // checked
 
 
 module.exports = reviewRouter;

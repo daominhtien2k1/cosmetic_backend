@@ -9,6 +9,8 @@ const {Review, Characteristic, Product} = require("../models/product.model");
 const mongoose = require("mongoose");
 const Post = require("../models/post.model");
 const Report = require("../models/report.model");
+const Comment = require("../models/comment.model");
+const Reply = require("../models/reply.model");
 
 const MAX_IMAGE_NUMBER = 4;
 const MAX_SIZE_IMAGE = 4 * 1024 * 1024; // for 4MB
@@ -1210,6 +1212,58 @@ reviewsController.unsetted_useful_review = expressAsyncHandler(async (req, res) 
     }
 });
 
+reviewsController.delete_review = expressAsyncHandler(async (req, res) => {
+    const id = req.params.id;
+
+    if (id === undefined) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
+    if (!isValidId(id)) {
+        return setAndSendResponse(res, responseError.PARAMETER_VALUE_IS_INVALID);
+    }
+
+    // người dùng bị khóa tài khoản
+    if (req.account.isBlocked) return setAndSendResponse(res, responseError.NOT_ACCESS);
+
+    let review;
+    try {
+        review = await Review.findById(id);
+    } catch (err) {
+        return setAndSendResponse(res, responseError.CAN_NOT_CONNECT_TO_DB);
+    }
+
+    if (!review) {
+        return setAndSendResponse(res, responseError.REVIEW_IS_NOT_EXISTED);
+    }
+
+    if (review.banned) {
+        return setAndSendResponse(res, responseError.REVIEW_IS_BANNED);
+    }
+
+    if (!review.userReview_id.equals(req.account._id)) {
+        return setAndSendResponse(res, responseError.NOT_ACCESS);
+    }
+
+    try {
+        await Review.findByIdAndDelete(id);
+
+        try {
+            if (review.images.length > 0) {
+                for (let image of review.images) {
+                    cloudinary.removeImg(image.publicId);
+                }
+            }
+            if (review.video && review.video.publicId) cloudinary.removeVideo(review.video.publicId);
+        } catch (error) {
+            return setAndSendResponse(res, responseError.EXCEPTION_ERROR);
+        }
+        // xóa reply
+        Reply.deleteMany({review_id: review._id});
+
+        setAndSendResponse(res, responseError.OK);
+    } catch (error) {
+        // console.log(error);
+        setAndSendResponse(res, responseError.CAN_NOT_CONNECT_TO_DB);
+    }
+});
 
 
 module.exports = reviewsController;
