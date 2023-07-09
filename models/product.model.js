@@ -311,13 +311,13 @@ const characteristicSchema = new mongoose.Schema({
         required: true
     },
     product_id: {type: mongoose.Schema.Types.ObjectId, ref: 'products'},
-    // số lượng đánh giá
+    // số lượng đánh giá - được cập nhật khi gọi product_characteristic_statistics
     reviews: {
         type: Number,
         required: false,
         default: 0
     },
-    // trung bình đánh giá
+    // trung bình đánh giá - được cập nhật khi gọi product_characteristic_statistics
     ratings: {
         type: Number,
         required: false,

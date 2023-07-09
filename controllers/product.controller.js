@@ -226,7 +226,7 @@ productsController.get_list_characteristics = expressAsyncHandler(async (req, re
     try {
         const characteristics = await Characteristic.find({product_id: product_id}).select("criteria");
 
-        const characteristic_reviews  =  characteristics.map((c) => ({
+        const characteristic_reviews = characteristics.map((c) => ({
             characteristic_id:  c._id,
             criteria: c.criteria
         }));

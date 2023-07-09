@@ -10,7 +10,7 @@ productRouter.post("/add_carousel", uploadFile, auth, productsController.add_car
 productRouter.get("/get_popular_products", auth, productsController.get_popular_products); // checked
 productRouter.get("/get_product/:id", auth, productsController.get_product);
 productRouter.get("/get_relate_products", auth, productsController.get_relate_products); // checked
-productRouter.get("/get_list_characteristics", auth, productsController.get_list_characteristics);
+productRouter.get("/get_list_characteristics", auth, productsController.get_list_characteristics); // checked
 productRouter.get("/get_loved_products", auth, productsController.get_loved_products); // checked
 productRouter.get("/get_viewed_products", auth, productsController.get_viewed_products); // checked
 productRouter.post("/love_product", auth, productsController.love_product); // checked

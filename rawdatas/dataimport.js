@@ -24,6 +24,7 @@ const realPosts = require("./real_data/post.realdata");
 const realCategories = require("./real_data/category.realdata");
 const realBrands = require("./real_data/brand.realdata");
 const realProducts = require("./real_data/product.realdata");
+const realCharacteristics = require("./real_data/characteristic.realdata");
 
 var nouns = [
   "bird",
@@ -300,7 +301,8 @@ importDataRouter.post("/products",
 importDataRouter.post("/characteristics",
     expressAsyncHandler(async (req, res) => {
       await Characteristic.remove({});
-      const importCharacteristics = await Characteristic.insertMany(characteristics);
+      // const importCharacteristics = await Characteristic.insertMany(characteristics);
+      const importCharacteristics = await Characteristic.insertMany(realCharacteristics);
       res.send({ importCharacteristics });
     })
 );

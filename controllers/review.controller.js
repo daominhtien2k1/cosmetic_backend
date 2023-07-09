@@ -393,6 +393,7 @@ reviewsController.get_list_instruction_reviews = expressAsyncHandler(async (req,
     }
 });
 
+// chỉ đơn thuần là thống kê sao, không cập nhật vào đâu cả
 reviewsController.get_list_reviews_star = expressAsyncHandler(async (req, res) => {
     let {product_id} = req.query;
     if (!product_id) return setAndSendResponse(res, responseError.PARAMETER_IS_NOT_ENOUGH);
@@ -547,7 +548,9 @@ reviewsController.product_characteristic_statistics = expressAsyncHandler(async 
     });
 });
 
-// add and update. Add: Quick - Standard - Detail - Instruction. Update: Quick - Standard - Detail - Instruction
+// Mỗi 1 người chỉ được đánh giá Quick hoặc Standard hoặc Detail 1 lần với 1 sản phẩm. Instruction thì vô số
+// 1 user chỉ được đánh giá 1 sản phẩm 1 lần (Quick/Standard/Detail 1 lần: Quick được chuyển sang Standard được chuyển sang Detail, Instruction vô hạn)
+// add and update. Add: Quick - Standard - Detail - Instruction. Update: Quick - Standard - Detail
 reviewsController.add_review = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
     let {classification, characteristic_reviews, rating, title, content } = req.body;
@@ -683,6 +686,7 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
 
     let savedReview;
 
+    // cập nhật lại review
     try {
         if (review.classification !== "Instruction") {
             const existedReview = await Review.findOne({
@@ -731,6 +735,7 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
             savedReview = await review.save();
         }
 
+        // bắt đầu trả về kết quả cuối cùng
         let reviewResult = await Review.findById(savedReview._id);
 
         let result = {
@@ -748,7 +753,7 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
             },
             is_setted_useful: false,
             is_blocked: false,
-            can_edit: true,
+            can_edit: true, // cần sửa lại theo post, vì có thể bị banned là không edit được (add thì true, nhưng khi update edit mà đang bị block rồi thì phải là false)
             banned: reviewResult.banned,
             can_reply: reviewResult.canReply
         }
@@ -798,7 +803,8 @@ reviewsController.add_review = expressAsyncHandler(async (req, res) => {
 
 });
 
-// Quick, Standard, Detail - phục vụ để update lại review: bao gồm rating, title, content, characteristic_reviews. Instruction không cần retrieve - Bởi vì ấn vào FAB không có dữ liệu được chuyển tiếp
+// Quick, Standard, Detail - phục vụ để update lại review: bao gồm rating, title, content, characteristic_reviews. Instruction không cần retrieve.
+// - Bởi vì ấn vào FAB không có dữ liệu được chuyển tiếp
 reviewsController.retrieve_review = expressAsyncHandler(async (req, res) => {
     const {product_id} = req.query;
 
